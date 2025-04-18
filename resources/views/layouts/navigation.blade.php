@@ -6,19 +6,23 @@
                 <!-- Logo -->
                 <div class="shrink-0">
                     <a href="{{ route('dashboard') }}" class="flex items-center">
-                        <img src="{{ asset('Logo/logo_menu.png') }}" alt="TavoCell 504" class="h-10 w-auto transition-transform hover:scale-105">
+                        <img src="{{ asset('Logo/logo_menu.png') }}" alt="TavoCell 504"
+                            class="h-10 w-auto transition-transform hover:scale-105">
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden sm:flex sm:items-center sm:space-x-2 ml-6">
                     <!-- Productos -->
-                    <div class="relative group" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                    <div class="relative group" x-data="{ open: false }" @mouseenter="open = true"
+                        @mouseleave="open = false">
                         <button class="nav-dropdown-btn">
                             <span class="nav-icon">📦</span>
                             <span>Productos</span>
-                            <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
                         <div class="nav-dropdown-menu" x-show="open" x-transition>
@@ -31,27 +35,31 @@
                         </div>
                     </div>
 
-                    <!-- Ventas -->
-                    <div class="relative group" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                    <!-- Facturación -->
+                    <div class="relative group" x-data="{ open: false }" @mouseenter="open = true"
+                        @mouseleave="open = false">
                         <button class="nav-dropdown-btn">
                             <span class="nav-icon">💸</span>
-                            <span>Ventas</span>
-                            <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            <span>Facturación</span>
+                            <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
                         <div class="nav-dropdown-menu" x-show="open" x-transition>
-                            <x-nav-link :href="route('ventas.index')" class="nav-dropdown-item">
-                                <span class="nav-icon">🧾</span> POS - Nueva Venta
+                            <x-nav-link :href="route('facturas.create')" class="nav-dropdown-item">
+                                <span class="nav-icon">🧾</span> POS - Nueva Factura
                             </x-nav-link>
                             <x-nav-link :href="route('facturas.index')" class="nav-dropdown-item">
-                                <span class="nav-icon">🧾</span> Consultar Facturas
+                                <span class="nav-icon">📄</span> Historial de Facturas
                             </x-nav-link>
                             <x-nav-link :href="route('cierres.index')" class="nav-dropdown-item">
-                                <span class="nav-icon">🔒</span> Cierres
+                                <span class="nav-icon">🔒</span> Cierres Diarios
                             </x-nav-link>
                         </div>
                     </div>
+
 
                     <!-- Clientes -->
                     <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="nav-item">
@@ -78,7 +86,9 @@
                                 </div>
                                 <span class="user-name">{{ Auth::user()->name }}</span>
                                 <svg class="dropdown-chevron" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    <path fill-rule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </div>
                         </button>
@@ -87,15 +97,18 @@
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')" class="user-menu-item">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                             {{ __('Perfil') }}
                         </x-dropdown-link>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <x-dropdown-link :href="route('logout')" class="user-menu-item" onclick="event.preventDefault(); this.closest('form').submit();">
+                            <x-dropdown-link :href="route('logout')" class="user-menu-item"
+                                onclick="event.preventDefault(); this.closest('form').submit();">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
                                 {{ __('Cerrar Sesión') }}
                             </x-dropdown-link>
@@ -107,11 +120,15 @@
             <!-- Hamburger (mobile) -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open" class="mobile-menu-btn">
-                    <svg class="h-6 w-6" :class="{ 'hidden': open, 'block': !open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    <svg class="h-6 w-6" :class="{ 'hidden': open, 'block': !open }" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
-                    <svg class="h-6 w-6" :class="{ 'hidden': !open, 'block': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    <svg class="h-6 w-6" :class="{ 'hidden': !open, 'block': open }" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
@@ -124,7 +141,7 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="mobile-nav-item">
                 <span class="nav-icon">📊</span> Dashboard
             </x-responsive-nav-link>
-            
+
             <div class="mobile-nav-group">
                 <div class="mobile-nav-header">
                     <span class="nav-icon">📦</span> Productos
@@ -138,7 +155,7 @@
                     </x-responsive-nav-link>
                 </div>
             </div>
-            
+
             <div class="mobile-nav-group">
                 <div class="mobile-nav-header">
                     <span class="nav-icon">💸</span> Ventas
@@ -155,11 +172,11 @@
                     </x-responsive-nav-link>
                 </div>
             </div>
-            
+
             <x-responsive-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="mobile-nav-item">
                 <span class="nav-icon">👤</span> Clientes
             </x-responsive-nav-link>
-            
+
             <x-responsive-nav-link :href="route('reparaciones.index')" :active="request()->routeIs('reparaciones.*')" class="mobile-nav-item">
                 <span class="nav-icon">🛠️</span> Reparaciones
             </x-responsive-nav-link>
@@ -179,15 +196,18 @@
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')" class="mobile-user-item">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     Perfil
                 </x-responsive-nav-link>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <x-responsive-nav-link :href="route('logout')" class="mobile-user-item" onclick="event.preventDefault(); this.closest('form').submit();">
+                    <x-responsive-nav-link :href="route('logout')" class="mobile-user-item"
+                        onclick="event.preventDefault(); this.closest('form').submit();">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
                         Cerrar Sesión
                     </x-responsive-nav-link>

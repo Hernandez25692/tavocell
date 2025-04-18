@@ -25,4 +25,9 @@ class Producto extends Model
         'proveedor',
         'imagen'
     ];
+    public function detallesFactura()
+{
+    return $this->hasMany(DetalleFactura::class);
+}
+
 }

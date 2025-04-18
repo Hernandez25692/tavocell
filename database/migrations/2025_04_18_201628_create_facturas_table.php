@@ -17,10 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('usuario_id');
             $table->string('metodo_pago')->default('Efectivo');
             $table->decimal('subtotal', 10, 2);
-            $table->decimal('isv', 10, 2);
             $table->decimal('total', 10, 2);
             $table->timestamps();
-
             $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('set null');
             $table->foreign('usuario_id')->references('id')->on('users')->onDelete('cascade');
         });

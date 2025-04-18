@@ -9,6 +9,7 @@ use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf; 
 
 class FacturaController extends Controller
 {
@@ -27,9 +28,14 @@ class FacturaController extends Controller
 
     public function store(Request $request)
     {
+        // Convertir JSON string a array
+        $productos = json_decode($request->productos, true);
+        $request->merge(['productos' => $productos]);
+
+        // Validación correcta del array
         $request->validate([
             'cliente_id' => 'nullable|exists:clientes,id',
-            'productos' => 'required|array',
+            'productos' => 'required|array|min:1',
             'productos.*.id' => 'required|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1',
             'total' => 'required|numeric|min:0',
@@ -38,10 +44,9 @@ class FacturaController extends Controller
         DB::beginTransaction();
         try {
             $subtotal = 0;
-            $isv = 0;
             $detalles = [];
 
-            foreach ($request->productos as $item) {
+            foreach ($productos as $item) {
                 $producto = Producto::findOrFail($item['id']);
 
                 if ($producto->stock < $item['cantidad']) {
@@ -64,16 +69,12 @@ class FacturaController extends Controller
                 $subtotal += $subtotalProducto;
             }
 
-            $isv = round($subtotal * 0.15, 2);
-            $total = $subtotal + $isv;
-
             $factura = Factura::create([
                 'cliente_id' => $request->cliente_id,
                 'usuario_id' => Auth::id(),
                 'metodo_pago' => 'Efectivo',
                 'subtotal' => $subtotal,
-                'isv' => $isv,
-                'total' => $total,
+                'total' => $subtotal,
             ]);
 
             foreach ($detalles as $detalle) {
@@ -82,18 +83,19 @@ class FacturaController extends Controller
 
             DB::commit();
             return redirect()->route('facturas.show', $factura)->with('success', 'Factura generada correctamente.');
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Error al generar la factura: ' . $e->getMessage());
         }
     }
 
+
     public function show(Factura $factura)
     {
-        $factura->load('cliente', 'detalles.producto', 'usuario');
+        $factura->load('cliente', 'detalles.producto', 'usuario'); // usuario CARGADO aquí
         return view('facturas.show', compact('factura'));
     }
+
 
     public function edit(Factura $factura)
     {
@@ -110,4 +112,13 @@ class FacturaController extends Controller
         $factura->delete();
         return redirect()->route('facturas.index')->with('success', 'Factura eliminada.');
     }
+
+    public function descargarPDF(Factura $factura)
+{
+    $factura->load('cliente', 'detalles.producto', 'usuario');
+
+    $pdf = Pdf::loadView('facturas.factura_pdf', compact('factura'));
+
+    return $pdf->download('Factura_' . $factura->id . '.pdf');
+}
 }

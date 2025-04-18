@@ -12,6 +12,7 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\FacturaController;
 
+
 //redirigir la ruta raíz
 Route::get('/', function () {
     return redirect()->route('login');
@@ -38,6 +39,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/inventario', [InventarioController::class, 'store'])->name('inventario.store')->middleware('auth');
     Route::resource('clientes', ClienteController::class)->middleware('auth');
     Route::resource('facturas', FacturaController::class)->middleware('auth');
+    Route::get('/facturas/{factura}/pdf', [FacturaController::class, 'descargarPDF'])->name('facturas.pdf');
+
+
+Route::get('/facturas/{factura}/pdf', [FacturaController::class, 'descargarPDF'])->name('facturas.pdf');
 });
 Route::get('/estado-reparacion', [ConsultaReparacionController::class, 'index'])->name('consulta.reparacion');
 Route::post('/estado-reparacion', [ConsultaReparacionController::class, 'buscar'])->name('consulta.buscar');
