@@ -8,8 +8,12 @@ use App\Http\Controllers\ReparacionController;
 use App\Http\Controllers\SeguimientoReparacionController;
 use App\Http\Controllers\ConsultaReparacionController;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\ClienteController;
+
+//redirigir la ruta raíz
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {
@@ -29,9 +33,11 @@ Route::middleware('auth')->group(function () {
     Route::post('reparaciones/{reparacion}/seguimientos', [SeguimientoReparacionController::class, 'store'])->name('seguimientos.store');
     Route::resource('productos', ProductoController::class)->middleware('auth');
     Route::resource('productos', ProductoController::class);
-    
+    Route::get('/inventario', [InventarioController::class, 'index'])->name('inventario.index')->middleware('auth');
+    Route::post('/inventario', [InventarioController::class, 'store'])->name('inventario.store')->middleware('auth');
+    Route::resource('clientes', ClienteController::class)->middleware('auth');
 });
 Route::get('/estado-reparacion', [ConsultaReparacionController::class, 'index'])->name('consulta.reparacion');
 Route::post('/estado-reparacion', [ConsultaReparacionController::class, 'buscar'])->name('consulta.buscar');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

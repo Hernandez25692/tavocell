@@ -12,26 +12,41 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <!-- Dashboard -->
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                        📊 Dashboard
                     </x-nav-link>
 
-                    {{-- Accesos a módulos --}}
-                    <x-nav-link :href="route('ventas.index')" :active="request()->routeIs('ventas.*')">
-                        Ventas
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('cierres.index')" :active="request()->routeIs('cierres.*')">
-                        Cierres
-                    </x-nav-link>
-
-                    <x-nav-link :href="route('reparaciones.index')" :active="request()->routeIs('reparaciones.*')">
-                        Reparaciones
-                    </x-nav-link>
-
+                    <!-- Productos -->
                     <x-nav-link :href="route('productos.index')" :active="request()->routeIs('productos.*')">
                         📦 Productos
                     </x-nav-link>
+
+                    <!-- Ingreso de Inventario -->
+                    <x-nav-link :href="route('inventario.index')" :active="request()->routeIs('inventario.*')">
+                        📥 Ingreso Inventario
+                    </x-nav-link>
+
+                    <!-- Ventas -->
+                    <x-nav-link :href="route('ventas.index')" :active="request()->routeIs('ventas.*')">
+                        💸 Ventas
+                    </x-nav-link>
+
+                    <!-- Clientes -->
+                    <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
+                        👤 Clientes
+                    </x-nav-link>
+
+                    <!-- Reparaciones -->
+                    <x-nav-link :href="route('reparaciones.index')" :active="request()->routeIs('reparaciones.*')">
+                        🛠️ Reparaciones
+                    </x-nav-link>
+
+                    <!-- Cierres -->
+                    <x-nav-link :href="route('cierres.index')" :active="request()->routeIs('cierres.*')">
+                        🔒 Cierres
+                    </x-nav-link>
+
 
                 </div>
             </div>
