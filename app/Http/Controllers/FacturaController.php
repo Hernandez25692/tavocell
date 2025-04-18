@@ -117,12 +117,19 @@ class FacturaController extends Controller
         return redirect()->route('facturas.index')->with('success', 'Factura eliminada.');
     }
 
-    public function descargarPDF(Factura $factura)
+    public function descargarPDF(Factura $factura, Request $request)
     {
         $factura->load('cliente', 'detalles.producto', 'usuario');
 
-        $pdf = Pdf::loadView('facturas.factura_pdf', compact('factura'));
+        $esCopia = $request->has('copia') && $request->copia == 1;
 
-        return $pdf->download('Factura_' . $factura->id . '.pdf');
+        // Si es original y aún no ha sido impresa, se marca como impresa
+        if (!$esCopia && !$factura->impresa) {
+            $factura->impresa = true;
+            $factura->save();
+        }
+
+        $pdf = PDF::loadView('facturas.factura_pdf', compact('factura', 'esCopia'));
+        return $pdf->stream("factura_{$factura->id}.pdf");
     }
 }

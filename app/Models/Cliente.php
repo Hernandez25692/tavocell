@@ -17,11 +17,6 @@ class Cliente extends Model
         'direccion',
     ];
 
-    protected static function newFactory()
-    {
-        return \Database\Factories\ClienteFactory::new();
-    }
-
     public function ventas()
     {
         return $this->hasMany(Venta::class);

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Factura #{{ $factura->id }} - TavoCell 504</title>
@@ -8,6 +9,7 @@
             margin: 0;
             size: A4;
         }
+
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: 12px;
@@ -15,6 +17,7 @@
             color: #333;
             line-height: 1.4;
         }
+
         .invoice-container {
             max-width: 800px;
             margin: 0 auto;
@@ -22,6 +25,7 @@
             border: 1px solid #eee;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
         }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -30,44 +34,55 @@
             padding-bottom: 15px;
             border-bottom: 2px solid #e74c3c;
         }
+
         .logo {
             height: 80px;
         }
+
         .invoice-info {
             text-align: right;
         }
+
         .invoice-title {
             font-size: 24px;
             font-weight: bold;
             color: #e74c3c;
             margin: 0;
         }
+
         .invoice-number {
             font-size: 16px;
             margin: 5px 0;
         }
+
         .company-info {
             margin-bottom: 25px;
         }
+
         .company-name {
             font-size: 18px;
             font-weight: bold;
             color: #2c3e50;
             margin-bottom: 5px;
         }
+
         .company-details p {
             margin: 3px 0;
             color: #555;
         }
-        .client-info, .invoice-details {
+
+        .client-info,
+        .invoice-details {
             width: 48%;
             float: left;
             margin-bottom: 20px;
         }
+
         .invoice-details {
             float: right;
             text-align: right;
         }
+
         .section-title {
             font-size: 14px;
             font-weight: bold;
@@ -76,16 +91,19 @@
             padding-bottom: 3px;
             border-bottom: 1px solid #eee;
         }
+
         .clearfix::after {
             content: "";
             display: table;
             clear: both;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
+
         th {
             background-color: #f8f9fa;
             color: #2c3e50;
@@ -94,32 +112,39 @@
             padding: 10px;
             border: 1px solid #ddd;
         }
+
         td {
             padding: 8px 10px;
             border: 1px solid #ddd;
         }
+
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
         .totals {
             width: 300px;
             float: right;
             margin-top: 10px;
         }
+
         .totals-row {
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
             border-bottom: 1px solid #eee;
         }
+
         .totals-label {
             font-weight: bold;
         }
+
         .grand-total {
             font-size: 14px;
             font-weight: bold;
             color: #e74c3c;
         }
+
         .footer {
             margin-top: 40px;
             padding-top: 15px;
@@ -128,22 +153,26 @@
             font-size: 11px;
             color: #777;
         }
+
         .payment-method {
             margin-top: 5px;
             font-style: italic;
         }
+
         .terms {
             margin-top: 30px;
             font-size: 10px;
             color: #777;
             text-align: center;
         }
+
         .qr-code {
             margin-top: 20px;
             text-align: center;
         }
     </style>
 </head>
+
 <body>
     <div class="invoice-container">
         <div class="header">
@@ -160,7 +189,9 @@
                 </div>
             </div>
             <div class="invoice-info">
-                <h1 class="invoice-title">FACTURA</h1>
+                <h1 class="invoice-title">
+                    {{ isset($esCopia) && $esCopia ? 'COPIA - FACTURA' : 'FACTURA' }}
+                </h1>
                 <div class="invoice-number">No. {{ $factura->id }}</div>
                 <div class="invoice-date">Fecha: {{ $factura->created_at->format('d/m/Y H:i') }}</div>
             </div>
@@ -193,13 +224,13 @@
             </thead>
             <tbody>
                 @foreach ($factura->detalles as $index => $detalle)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $detalle->producto->nombre }}</td>
-                    <td>{{ $detalle->cantidad }}</td>
-                    <td>L. {{ number_format($detalle->precio_unitario, 2) }}</td>
-                    <td>L. {{ number_format($detalle->subtotal, 2) }}</td>
-                </tr>
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $detalle->producto->nombre }}</td>
+                        <td>{{ $detalle->cantidad }}</td>
+                        <td>L. {{ number_format($detalle->precio_unitario, 2) }}</td>
+                        <td>L. {{ number_format($detalle->subtotal, 2) }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
@@ -218,15 +249,15 @@
                     <span class="totals-label">TOTAL:</span>
                     <span>L. {{ number_format($factura->total, 2) }}</span>
                 </div>
-                @if($factura->metodo_pago === 'Efectivo')
-                <div class="totals-row">
-                    <span class="totals-label">Efectivo:</span>
-                    <span>L. {{ number_format($factura->monto_recibido, 2) }}</span>
-                </div>
-                <div class="totals-row">
-                    <span class="totals-label">Cambio:</span>
-                    <span>L. {{ number_format($factura->monto_recibido - $factura->total, 2) }}</span>
-                </div>
+                @if ($factura->metodo_pago === 'Efectivo')
+                    <div class="totals-row">
+                        <span class="totals-label">Efectivo:</span>
+                        <span>L. {{ number_format($factura->monto_recibido, 2) }}</span>
+                    </div>
+                    <div class="totals-row">
+                        <span class="totals-label">Cambio:</span>
+                        <span>L. {{ number_format($factura->monto_recibido - $factura->total, 2) }}</span>
+                    </div>
                 @endif
             </div>
         </div>
@@ -248,5 +279,23 @@
             <p>¡Gracias {{ $factura->cliente->nombre ?? ' ' }} por su preferencia!</p>
         </div>
     </div>
+
+    @if (isset($esCopia) && $esCopia)
+        <div
+            style="
+        position: fixed;
+        top: 40%;
+        left: 20%;
+        font-size: 90px;
+        color: rgba(200, 200, 200, 0.3);
+        transform: rotate(-30deg);
+        z-index: 9999;
+        pointer-events: none;
+    ">
+            COPIA
+        </div>
+    @endif
+
 </body>
+
 </html>

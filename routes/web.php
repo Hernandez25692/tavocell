@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('facturas', FacturaController::class)->middleware('auth');
     Route::get('/facturas/{factura}/pdf', [FacturaController::class, 'descargarPDF'])->name('facturas.pdf');
     Route::get('/facturas/{factura}/pdf', [FacturaController::class, 'descargarPDF'])->name('facturas.pdf');
+    Route::resource('clientes', ClienteController::class);
 
 
 
