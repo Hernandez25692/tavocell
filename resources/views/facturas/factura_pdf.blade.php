@@ -152,11 +152,10 @@
                 <div class="company-info">
                     <div class="company-name">TavoCell 504</div>
                     <div class="company-details">
-                        <p>Teléfono: (+504) 9999-9999</p>
+                        <p>Teléfono: (+504)3238-4184</p>
                         <p>Email: info@tavocell.com</p>
-                        <p>Dirección: Su dirección, Ciudad</p>
+                        <p>Dirección:Namasigue, 02009 San Jeronimo, Choluteca</p>
                         <p>RTN: 0801-9999-99999</p>
-                        <p>CAI: {{ $factura->cai ?? 'N/A' }}</p>
                     </div>
                 </div>
             </div>
@@ -164,8 +163,6 @@
                 <h1 class="invoice-title">FACTURA</h1>
                 <div class="invoice-number">No. {{ $factura->id }}</div>
                 <div class="invoice-date">Fecha: {{ $factura->created_at->format('d/m/Y H:i') }}</div>
-                <div class="invoice-range">Rango autorizado: {{ $factura->rango_autorizado ?? 'N/A' }}</div>
-                <div class="invoice-due">Fecha límite de emisión: {{ $factura->fecha_limite_emision ?? 'N/A' }}</div>
             </div>
         </div>
 
@@ -174,16 +171,13 @@
                 <div class="section-title">DATOS DEL CLIENTE</div>
                 <p><strong>Nombre:</strong> {{ $factura->cliente->nombre ?? 'Consumidor Final' }}</p>
                 <p><strong>RTN:</strong> {{ $factura->cliente->rtn ?? 'N/A' }}</p>
-                <p><strong>Teléfono:</strong> {{ $factura->cliente->telefono ?? 'N/A' }}</p>
-                <p><strong>Dirección:</strong> {{ $factura->cliente->direccion ?? 'N/A' }}</p>
             </div>
 
             <div class="invoice-details">
                 <div class="section-title">DETALLES DE FACTURA</div>
                 <p><strong>Vendedor:</strong> {{ $factura->usuario->name ?? 'No registrado' }}</p>
-                <p><strong>Caja:</strong> {{ $factura->caja_id ?? 'N/A' }}</p>
+                <p><strong>Caja:</strong> {{ $factura->caja_id ?? '1' }}</p>
                 <p><strong>Método de pago:</strong> {{ $factura->metodo_pago }}</p>
-                <p><strong>Estado:</strong> {{ $factura->estado }}</p>
             </div>
         </div>
 
@@ -195,7 +189,6 @@
                     <th width="10%">Cantidad</th>
                     <th width="15%">Precio Unitario</th>
                     <th width="15%">Subtotal</th>
-                    <th width="10%">ISV</th>
                 </tr>
             </thead>
             <tbody>
@@ -206,7 +199,6 @@
                     <td>{{ $detalle->cantidad }}</td>
                     <td>L. {{ number_format($detalle->precio_unitario, 2) }}</td>
                     <td>L. {{ number_format($detalle->subtotal, 2) }}</td>
-                    <td>15%</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -239,14 +231,6 @@
             </div>
         </div>
 
-        <div class="payment-method">
-            <p><strong>Forma de pago:</strong> {{ $factura->metodo_pago }}</p>
-            @if($factura->metodo_pago === 'Tarjeta')
-                <p><strong>N° Tarjeta:</strong> **** **** **** {{ substr($factura->numero_tarjeta, -4) ?? 'N/A' }}</p>
-            @elseif($factura->metodo_pago === 'Transferencia')
-                <p><strong>Referencia:</strong> {{ $factura->referencia_transferencia ?? 'N/A' }}</p>
-            @endif
-        </div>
 
         <div class="qr-code">
             <!-- Space for QR code if implemented -->
@@ -261,8 +245,7 @@
 
         <div class="footer">
             <p>"HONRADEZ, CALIDAD Y SERVICIO"</p>
-            <p>TavoCell 504 • Tel: (+504) 9999-9999 • www.tavocell.com</p>
-            <p>¡Gracias por su preferencia!</p>
+            <p>¡Gracias {{ $factura->cliente->nombre ?? ' ' }} por su preferencia!</p>
         </div>
     </div>
 </body>

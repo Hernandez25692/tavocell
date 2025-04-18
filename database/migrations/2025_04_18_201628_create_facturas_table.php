@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('metodo_pago')->default('Efectivo');
             $table->decimal('subtotal', 10, 2);
             $table->decimal('total', 10, 2);
+            $table->decimal('monto_recibido', 10, 2)->default(0);
+            $table->decimal('cambio', 10, 2)->default(0);
             $table->timestamps();
             $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('set null');
             $table->foreign('usuario_id')->references('id')->on('users')->onDelete('cascade');

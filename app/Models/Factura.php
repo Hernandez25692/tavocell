@@ -15,7 +15,10 @@ class Factura extends Model
         'metodo_pago',
         'subtotal',
         'total',
+        'monto_recibido',
+        'cambio',
     ];
+
 
     public function cliente()
     {

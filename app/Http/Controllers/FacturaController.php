@@ -9,7 +9,7 @@ use App\Models\Cliente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf; 
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FacturaController extends Controller
 {
@@ -28,17 +28,17 @@ class FacturaController extends Controller
 
     public function store(Request $request)
     {
-        // Convertir JSON string a array
+        // Decodificar los productos del JSON recibido
         $productos = json_decode($request->productos, true);
         $request->merge(['productos' => $productos]);
 
-        // Validación correcta del array
         $request->validate([
             'cliente_id' => 'nullable|exists:clientes,id',
             'productos' => 'required|array|min:1',
             'productos.*.id' => 'required|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1',
             'total' => 'required|numeric|min:0',
+            'monto_recibido' => 'required|numeric|min:0',
         ]);
 
         DB::beginTransaction();
@@ -75,6 +75,8 @@ class FacturaController extends Controller
                 'metodo_pago' => 'Efectivo',
                 'subtotal' => $subtotal,
                 'total' => $subtotal,
+                'monto_recibido' => $request->monto_recibido,
+                'cambio' => $request->monto_recibido - $subtotal,
             ]);
 
             foreach ($detalles as $detalle) {
@@ -88,6 +90,8 @@ class FacturaController extends Controller
             return back()->with('error', 'Error al generar la factura: ' . $e->getMessage());
         }
     }
+
+
 
 
     public function show(Factura $factura)
@@ -114,11 +118,11 @@ class FacturaController extends Controller
     }
 
     public function descargarPDF(Factura $factura)
-{
-    $factura->load('cliente', 'detalles.producto', 'usuario');
+    {
+        $factura->load('cliente', 'detalles.producto', 'usuario');
 
-    $pdf = Pdf::loadView('facturas.factura_pdf', compact('factura'));
+        $pdf = Pdf::loadView('facturas.factura_pdf', compact('factura'));
 
-    return $pdf->download('Factura_' . $factura->id . '.pdf');
-}
+        return $pdf->download('Factura_' . $factura->id . '.pdf');
+    }
 }
