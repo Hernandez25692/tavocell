@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Factura;
+use App\Models\DetalleFactura;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Reparacion;
 
 class ReparacionController extends Controller
 {
@@ -40,6 +44,8 @@ class ReparacionController extends Controller
             'accesorios' => 'nullable|string',
             'tecnico_id' => 'required|exists:users,id',
             'fecha_ingreso' => 'required|date',
+            'costo_total' => 'required|numeric|min:0',
+            'abono' => 'nullable|numeric|min:0|max:' . $request->input('costo_total'),
         ]);
 
         \App\Models\Reparacion::create([
@@ -51,11 +57,14 @@ class ReparacionController extends Controller
             'accesorios' => $request->accesorios,
             'tecnico_id' => $request->tecnico_id,
             'fecha_ingreso' => $request->fecha_ingreso,
+            'costo_total' => $request->costo_total,
+            'abono' => $request->abono ?? 0,
             'estado' => 'recibido',
         ]);
 
         return redirect()->route('reparaciones.index')->with('success', 'Reparación registrada correctamente.');
     }
+
 
 
     /**
@@ -89,4 +98,62 @@ class ReparacionController extends Controller
     {
         //
     }
+
+    public function facturar(Reparacion $reparacion)
+    {
+        if ($reparacion->factura_id) {
+            return redirect()->back()->with('error', 'Ya ha sido facturada.');
+        }
+
+        $cliente = $reparacion->cliente;
+        $cliente_id = $cliente ? $cliente->id : null;
+        $total = $reparacion->costo_total - $reparacion->abono;
+
+        $factura = Factura::create([
+            'cliente_id' => $cliente_id,
+            'usuario_id' => Auth::id(),
+            'metodo_pago' => 'Efectivo',
+            'subtotal' => $total,
+            'total' => $total,
+            'monto_recibido' => $total,
+            'cambio' => 0,
+        ]);
+
+        // Crear detalle personalizado (sin producto_id)
+        $factura->detalles()->create([
+            'producto_id' => null,
+            'cantidad' => 1,
+            'precio_unitario' => $total,
+            'subtotal' => $total,
+            'descripcion' => "Reparación de {$reparacion->marca} {$reparacion->modelo}",
+        ]);
+
+        // Vincular y marcar como entregado
+        $reparacion->update([
+            'factura_id' => $factura->id,
+            'estado' => 'entregado',
+        ]);
+
+        return redirect()->route('facturas.show', $factura)->with('success', 'Factura generada y reparación entregada.');
+    }
+
+    public function abonar(Request $request, Reparacion $reparacion)
+{
+    $request->validate([
+        'nuevo_abono' => 'required|numeric|min:1',
+    ]);
+
+    $nuevoTotalAbono = $reparacion->abono + $request->nuevo_abono;
+
+    if ($nuevoTotalAbono > $reparacion->costo_total) {
+        return redirect()->back()->with('error', '⚠️ El abono excede el total de la reparación.');
+    }
+
+    $reparacion->abono = $nuevoTotalAbono;
+    $reparacion->save();
+
+    return redirect()->back()->with('success', '✅ Abono registrado correctamente.');
+}
+
+
 }

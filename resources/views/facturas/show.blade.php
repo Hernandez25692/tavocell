@@ -11,9 +11,9 @@
             <!-- Datos generales -->
             <div class="bg-white shadow-md rounded-lg p-6 border border-gray-200">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
-                    <p><strong>👤 Cliente:</strong> {{ $factura->cliente->nombre ?? 'Consumidor Final' }}</p>
+                    <p><strong>👤 Cliente:</strong> {{ optional($factura->cliente)->nombre ?? 'Consumidor Final' }}</p>
                     <p><strong>🧑‍💼 Vendedor:</strong> {{ $factura->usuario->name ?? 'No registrado' }}</p>
-                    <p><strong>📅 Fecha:</strong> {{ $factura->created_at->format('Y-m-d H:i') }}</p>
+                    <p><strong>📅 Fecha:</strong> {{ $factura->created_at ? $factura->created_at->format('Y-m-d H:i') : 'No disponible' }}</p>
                     <p><strong>💳 Método de Pago:</strong>
                         <span class="inline-block px-2 py-1 rounded bg-blue-100 text-blue-700 font-medium">
                             {{ $factura->metodo_pago }}
@@ -28,15 +28,15 @@
                 </div>
             </div>
 
-            <!-- Productos -->
+            <!-- Detalles de Factura -->
             <div>
-                <h2 class="text-xl font-semibold text-gray-800 mb-4 mt-2">📦 Productos Facturados</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 mt-2">📦 Detalles Facturados</h2>
 
                 <div class="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
                     <table class="min-w-full table-auto text-sm text-left">
                         <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
                             <tr>
-                                <th class="px-6 py-3">Producto</th>
+                                <th class="px-6 py-3">Producto / Servicio</th>
                                 <th class="px-6 py-3">Cantidad</th>
                                 <th class="px-6 py-3">Precio Unitario</th>
                                 <th class="px-6 py-3">Subtotal</th>
@@ -45,11 +45,16 @@
                         <tbody class="text-gray-700">
                             @foreach ($factura->detalles as $detalle)
                                 <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4">{{ $detalle->producto->nombre }}</td>
+                                    <td class="px-6 py-4">
+                                        @if ($detalle->producto_id)
+                                            {{ $detalle->producto->nombre }}
+                                        @else
+                                            {{ $detalle->descripcion ?? 'Servicio de reparación' }}
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4">{{ $detalle->cantidad }}</td>
                                     <td class="px-6 py-4">L. {{ number_format($detalle->precio_unitario, 2) }}</td>
-                                    <td class="px-6 py-4 font-medium text-green-700">L.
-                                        {{ number_format($detalle->subtotal, 2) }}</td>
+                                    <td class="px-6 py-4 font-medium text-green-700">L. {{ number_format($detalle->subtotal, 2) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -74,8 +79,6 @@
                     </button>
                 @endif
 
-
-
                 <a href="{{ route('facturas.index') }}"
                     class="inline-flex items-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-4 py-2 rounded-lg transition">
                     ← Volver al Historial
@@ -95,7 +98,6 @@
                     opacity: 0;
                     transform: translateY(10px);
                 }
-
                 to {
                     opacity: 1;
                     transform: translateY(0);

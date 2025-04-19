@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CierreDiario;
 use App\Models\Venta;
 use Illuminate\Http\Request;
+use App\Models\Factura;
 
 class CierreDiarioController extends Controller
 {
@@ -23,9 +24,11 @@ class CierreDiarioController extends Controller
             return back()->with('error', 'El cierre de hoy ya fue realizado.');
         }
 
-        $ventasHoy = Venta::whereDate('fecha_venta', $fechaHoy)->get();
+        $ventasHoy = Factura::whereDate('created_at', $fechaHoy)->get();
         $totalVentas = $ventasHoy->sum('total');
-        $totalReparaciones = 0; // implementar cuando se integren reparaciones
+        $totalReparaciones = Factura::whereDate('created_at', $fechaHoy)
+            ->whereHas('detalles', fn($q) => $q->whereNull('producto_id')) // solo reparaciones
+            ->sum('total');
 
         $cierre = CierreDiario::create([
             'fecha' => $fechaHoy,

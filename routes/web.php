@@ -42,6 +42,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/facturas/{factura}/pdf', [FacturaController::class, 'descargarPDF'])->name('facturas.pdf');
     Route::get('/facturas/{factura}/pdf', [FacturaController::class, 'descargarPDF'])->name('facturas.pdf');
     Route::resource('clientes', ClienteController::class);
+    Route::post('/reparaciones/{reparacion}/facturar', [\App\Http\Controllers\ReparacionController::class, 'facturar'])->name('facturar.reparacion');
+    Route::post('/reparaciones/{reparacion}/abonar', [ReparacionController::class, 'abonar'])->name('reparaciones.abonar');
+
 
 
 

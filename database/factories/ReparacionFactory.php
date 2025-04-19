@@ -2,32 +2,33 @@
 
 namespace Database\Factories;
 
+use App\Models\Cliente;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Reparacion>
- */
 class ReparacionFactory extends Factory
 {
     /**
      * Define the model's default state.
-     *
-     * @return array<string, mixed>
      */
-    public function definition()
-{
-    return [
-        'cliente_id' => \App\Models\Cliente::inRandomOrder()->first()->id,
-        'marca' => $this->faker->randomElement(['Samsung', 'Huawei', 'Xiaomi', 'iPhone']),
-        'modelo' => 'Modelo ' . $this->faker->randomDigit(),
-        'imei' => $this->faker->numerify('###############'),
-        'falla_reportada' => $this->faker->sentence(),
-        'accesorios' => $this->faker->randomElement(['Sin accesorios', 'Cargador', 'Audífonos', 'Cargador y estuche']),
-        'tecnico_id' => \App\Models\User::inRandomOrder()->first()->id,
-        'estado' => $this->faker->randomElement(['recibido', 'en_proceso', 'listo']),
-        'fecha_ingreso' => now()->subDays(rand(1, 10)),
-        'total' => rand(500, 1200),
-    ];
-}
+    public function definition(): array
+    {
+        $costoTotal = $this->faker->numberBetween(300, 2000);
+        $abono = $this->faker->numberBetween(0, $costoTotal); // nunca mayor al total
 
+        return [
+            'cliente_id' => Cliente::inRandomOrder()->first()->id,
+            'marca' => $this->faker->randomElement(['Samsung', 'Huawei', 'Motorola', 'Xiaomi', 'iPhone']),
+            'modelo' => $this->faker->word(),
+            'imei' => $this->faker->optional()->numerify('###############'),
+            'falla_reportada' => $this->faker->sentence(),
+            'accesorios' => $this->faker->optional()->randomElement(['Cargador', 'Audífonos', 'Ninguno']),
+            'tecnico_id' => User::inRandomOrder()->first()->id,
+            'estado' => $this->faker->randomElement(['recibido', 'en_proceso', 'listo']),
+            'fecha_ingreso' => $this->faker->date(),
+            'fecha_entrega' => null,
+            'costo_total' => $costoTotal,
+            'abono' => $abono,
+        ];
+    }
 }

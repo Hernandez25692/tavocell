@@ -20,11 +20,12 @@ class Reparacion extends Model
         'falla_reportada',
         'accesorios',
         'tecnico_id',
-        'estado',
         'fecha_ingreso',
-        'fecha_entrega',
-        'total'
+        'costo_total',
+        'abono',
+        'estado',
     ];
+
 
     public function cliente()
     {
@@ -39,5 +40,10 @@ class Reparacion extends Model
     public function seguimientos()
     {
         return $this->hasMany(SeguimientoReparacion::class);
+    }
+
+    public function factura()
+    {
+        return $this->belongsTo(Factura::class);
     }
 }

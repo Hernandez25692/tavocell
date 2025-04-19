@@ -15,9 +15,20 @@ class FacturaController extends Controller
 {
     public function index()
     {
-        $facturas = Factura::with('cliente')->latest()->paginate(10);
-        return view('facturas.index', compact('facturas'));
+        $facturas = \App\Models\Factura::with(['cliente', 'detalles', 'detalles.producto', 'usuario'])->latest()->get();
+
+        $facturasProductos = $facturas->filter(function ($factura) {
+            return $factura->detalles->first()?->producto_id !== null;
+        });
+
+        $facturasReparaciones = $facturas->filter(function ($factura) {
+            return $factura->detalles->first()?->producto_id === null;
+        });
+
+        return view('facturas.index', compact('facturasProductos', 'facturasReparaciones'));
     }
+
+
 
     public function create()
     {

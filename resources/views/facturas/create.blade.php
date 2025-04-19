@@ -162,7 +162,7 @@
             const codigo = document.getElementById('codigo-producto').value.trim();
             const producto = productos.find(p => p.codigo === codigo);
             if (!producto) {
-                alert('❌ Producto no encontrado');
+                showAlert('❌ Producto no encontrado');
                 return;
             }
 
@@ -230,7 +230,7 @@
 
         function mostrarResumen() {
             if (carrito.length === 0) {
-                alert('⚠️ Agrega productos primero');
+                showAlert('⚠️ Agrega productos primero');
                 return;
             }
 

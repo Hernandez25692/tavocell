@@ -16,7 +16,7 @@
                     Nueva Reparación
                 </a>
             </div>
-
+    
             <div class="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
                 <table class="min-w-full table-auto text-sm text-left">
                     <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
