@@ -24,6 +24,7 @@ class Reparacion extends Model
         'costo_total',
         'abono',
         'estado',
+        'factura_id',
     ];
 
 

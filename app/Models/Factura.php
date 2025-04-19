@@ -34,4 +34,9 @@ class Factura extends Model
     {
         return $this->hasMany(DetalleFactura::class);
     }
+
+    public function reparacion()
+    {
+        return $this->hasOne(Reparacion::class);
+    }
 }

@@ -107,53 +107,52 @@ class ReparacionController extends Controller
 
         $cliente = $reparacion->cliente;
         $cliente_id = $cliente ? $cliente->id : null;
-        $total = $reparacion->costo_total - $reparacion->abono;
+        $subtotal = $reparacion->costo_total;
+        $saldo_pendiente = $subtotal - $reparacion->abono;
 
         $factura = Factura::create([
             'cliente_id' => $cliente_id,
             'usuario_id' => Auth::id(),
             'metodo_pago' => 'Efectivo',
-            'subtotal' => $total,
-            'total' => $total,
-            'monto_recibido' => $total,
+            'subtotal' => $subtotal,
+            'total' => $subtotal,
+            'monto_recibido' => $saldo_pendiente,
             'cambio' => 0,
         ]);
 
-        // Crear detalle personalizado (sin producto_id)
         $factura->detalles()->create([
             'producto_id' => null,
             'cantidad' => 1,
-            'precio_unitario' => $total,
-            'subtotal' => $total,
+            'precio_unitario' => $subtotal,
+            'subtotal' => $subtotal,
             'descripcion' => "Reparación de {$reparacion->marca} {$reparacion->modelo}",
         ]);
 
-        // Vincular y marcar como entregado
         $reparacion->update([
             'factura_id' => $factura->id,
             'estado' => 'entregado',
         ]);
 
-        return redirect()->route('facturas.show', $factura)->with('success', 'Factura generada y reparación entregada.');
+        return redirect()->route('facturas_reparaciones.show', $factura->id)
+            ->with('success', 'Factura generada correctamente.');
     }
+
 
     public function abonar(Request $request, Reparacion $reparacion)
-{
-    $request->validate([
-        'nuevo_abono' => 'required|numeric|min:1',
-    ]);
+    {
+        $request->validate([
+            'nuevo_abono' => 'required|numeric|min:1',
+        ]);
 
-    $nuevoTotalAbono = $reparacion->abono + $request->nuevo_abono;
+        $nuevoTotalAbono = $reparacion->abono + $request->nuevo_abono;
 
-    if ($nuevoTotalAbono > $reparacion->costo_total) {
-        return redirect()->back()->with('error', '⚠️ El abono excede el total de la reparación.');
+        if ($nuevoTotalAbono > $reparacion->costo_total) {
+            return redirect()->back()->with('error', '⚠️ El abono excede el total de la reparación.');
+        }
+
+        $reparacion->abono = $nuevoTotalAbono;
+        $reparacion->save();
+
+        return redirect()->back()->with('success', '✅ Abono registrado correctamente.');
     }
-
-    $reparacion->abono = $nuevoTotalAbono;
-    $reparacion->save();
-
-    return redirect()->back()->with('success', '✅ Abono registrado correctamente.');
-}
-
-
 }

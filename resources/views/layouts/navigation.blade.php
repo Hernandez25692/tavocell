@@ -48,17 +48,23 @@
                             </svg>
                         </button>
                         <div class="nav-dropdown-menu" x-show="open" x-transition>
-                            <x-nav-link :href="route('facturas.create')" class="nav-dropdown-item">
-                                <span class="nav-icon">🧾</span> POS - Nueva Factura
+                            <x-nav-link :href="route('facturas_productos.create')" class="nav-dropdown-item">
+                                <span class="nav-icon">🛒</span> Nueva Factura Producto
                             </x-nav-link>
-                            <x-nav-link :href="route('facturas.index')" class="nav-dropdown-item">
-                                <span class="nav-icon">📄</span> Historial de Facturas
+                            <x-nav-link :href="route('facturas_productos.index')" class="nav-dropdown-item">
+                                <span class="nav-icon">📄</span> Historial Productos
                             </x-nav-link>
+                            <x-nav-link :href="route('facturas_reparaciones.index')" class="nav-dropdown-item">
+                                <span class="nav-icon">🔧</span> Historial Reparaciones
+                            </x-nav-link>
+
                             <x-nav-link :href="route('cierres.index')" class="nav-dropdown-item">
                                 <span class="nav-icon">🔒</span> Cierres Diarios
                             </x-nav-link>
                         </div>
                     </div>
+
+
 
 
                     <!-- Clientes -->
@@ -161,16 +167,20 @@
                     <span class="nav-icon">💸</span> Ventas
                 </div>
                 <div class="mobile-nav-submenu">
-                    <x-responsive-nav-link :href="route('ventas.index')" class="mobile-nav-subitem">
-                        <span class="nav-icon">🧾</span> POS - Nueva Venta
+                    <x-responsive-nav-link :href="route('facturas_productos.create')" class="mobile-nav-subitem">
+                        <span class="nav-icon">🛒</span> Nueva Factura Producto
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('facturas.index')" class="mobile-nav-subitem">
-                        <span class="nav-icon">🧾</span> Consultar Facturas
+                    <x-responsive-nav-link :href="route('facturas_productos.index')" class="mobile-nav-subitem">
+                        <span class="nav-icon">📄</span> Historial Productos
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('facturas_reparaciones.index')" class="mobile-nav-subitem">
+                        <span class="nav-icon">🔧</span> Historial Reparaciones
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('cierres.index')" class="mobile-nav-subitem">
                         <span class="nav-icon">🔒</span> Cierres
                     </x-responsive-nav-link>
                 </div>
+
             </div>
 
             <x-responsive-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="mobile-nav-item">
