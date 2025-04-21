@@ -18,8 +18,11 @@
         <!-- Filtros -->
         <form method="GET" action="{{ route('reparaciones.index') }}" class="bg-white rounded-lg shadow p-4 border border-gray-200">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <input type="text" name="cliente" value="{{ request('cliente') }}" placeholder="🔍 Buscar cliente..."
-                    class="border-gray-300 rounded-md shadow-sm w-full">
+                <!-- Buscar por Identidad -->
+                    <div>
+                        <input type="text" name="identidad" value="{{ request('identidad') }}"
+                            class="border border-gray-300 rounded px-4 py-2" placeholder="Buscar por identidad">
+                    </div>
 
                 <select name="estado" class="border-gray-300 rounded-md shadow-sm w-full">
                     <option value="">Todos los estados</option>

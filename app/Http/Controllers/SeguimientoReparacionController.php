@@ -23,18 +23,25 @@ class SeguimientoReparacionController extends Controller
             'estado' => 'required|in:recibido,en_proceso,listo,entregado',
         ]);
 
+        $estado = $request->estado;
+        $pendiente = $reparacion->costo_total - $reparacion->abono;
+
+        // 🟡 Solo evitamos ENTREGAR si aún hay saldo pendiente
+        if ($estado === 'entregado' && $pendiente > 0) {
+            return back()->with('error', '⚠️ No puedes marcar esta reparación como "Entregado" hasta que el cliente haya pagado el total.');
+        }
+
         SeguimientoReparacion::create([
             'reparacion_id' => $reparacion->id,
             'descripcion' => $request->descripcion,
-            'estado' => $request->estado,
+            'estado' => $estado,
             'fecha_avance' => now(),
-            'tecnico_id' => Auth::user()->id, // 👈 Esto elimina el warning
+            'tecnico_id' => Auth::id(),
             'notificado' => false,
         ]);
 
-        // Actualiza estado actual en la reparación
-        $reparacion->update(['estado' => $request->estado]);
+        $reparacion->update(['estado' => $estado]);
 
-        return back()->with('success', 'Seguimiento actualizado correctamente.');
+        return back()->with('success', '✅ Seguimiento actualizado correctamente.');
     }
 }

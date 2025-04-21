@@ -71,43 +71,43 @@
                 </form>
             </div>
 
-            @if ($reparacion->estado === 'listo' && !$reparacion->factura_id)
-                @php
-                    $pendiente = $reparacion->costo_total - $reparacion->abono;
-                @endphp
+            @php
+                $pendiente = $reparacion->costo_total - $reparacion->abono;
+            @endphp
 
-                @if ($pendiente > 0)
-                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 px-4 py-3 rounded mt-4">
-                        ⚠️ El cliente aún debe <strong>L. {{ number_format($pendiente, 2) }}</strong>. No se puede generar
-                        factura hasta que esté pagado el total.
-                    </div>
-                @else
-                    <form method="POST" action="{{ route('facturar.reparacion', $reparacion->id) }}" class="mt-6">
+            @if ($pendiente > 0 && !$reparacion->factura_id)
+                <!-- Mostrar alerta de saldo pendiente y formulario para abonar -->
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 px-4 py-3 rounded mt-4">
+                    ⚠️ El cliente aún debe <strong>L. {{ number_format($pendiente, 2) }}</strong>.
+                    Debe pagar la totalidad antes de marcar como "Entregado" y generar factura.
+                </div>
+
+                <div class="bg-white p-4 rounded-lg shadow mt-6 border border-yellow-300">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">➕ Registrar Abono Adicional</h3>
+                    <form action="{{ route('reparaciones.abonar', $reparacion) }}" method="POST"
+                        class="flex flex-col sm:flex-row items-center gap-3">
                         @csrf
+                        <input type="number" name="nuevo_abono" step="0.01" min="1" max="{{ $pendiente }}"
+                            class="border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
+                            placeholder="L. abonar">
                         <button type="submit"
-                            class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow">
-                            💸 Generar Factura de Reparación
+                            class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-md shadow">
+                            Agregar Abono
                         </button>
                     </form>
-                @endif
-                @if ($reparacion->costo_total > $reparacion->abono && $reparacion->estado !== 'entregado')
-                    <div class="bg-white p-4 rounded-lg shadow mt-6 border border-yellow-300">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">➕ Registrar Abono Adicional</h3>
-                        <form action="{{ route('reparaciones.abonar', $reparacion) }}" method="POST"
-                            class="flex flex-col sm:flex-row items-center gap-3">
-                            @csrf
-                            <input type="number" name="nuevo_abono" step="0.01" min="1"
-                                max="{{ $reparacion->costo_total - $reparacion->abono }}"
-                                class="border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
-                                placeholder="L. abonar">
-                            <button type="submit"
-                                class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded-md shadow">
-                                Agregar Abono
-                            </button>
-                        </form>
-                    </div>
-                @endif
+                </div>
+            @elseif($reparacion->estado === 'entregado' && !$reparacion->factura_id)
+                <!-- Ya pagó todo, permitir facturación -->
+                <form method="POST" action="{{ route('facturar.reparacion', $reparacion->id) }}" class="mt-6">
+                    @csrf
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow">
+                        💸 Generar Factura de Reparación
+                    </button>
+                </form>
             @endif
+
+
+
 
 
 

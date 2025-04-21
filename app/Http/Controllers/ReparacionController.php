@@ -17,11 +17,39 @@ use Illuminate\Support\Facades\File;
 
 class ReparacionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reparaciones = Reparacion::with('cliente')->latest()->get();
+        $query = Reparacion::with('cliente');
+
+        // Filtro por cliente
+        if ($request->filled('cliente')) {
+            $query->whereHas('cliente', function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->cliente . '%');
+            });
+        }
+        if ($request->filled('identidad')) {
+            $query->whereHas('cliente', function ($q) use ($request) {
+                $q->where('identidad', 'like', '%' . $request->identidad . '%');
+            });
+        }
+        // Filtro por estado
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        // Filtro por fechas
+        if ($request->filled('desde')) {
+            $query->whereDate('fecha_ingreso', '>=', $request->desde);
+        }
+        if ($request->filled('hasta')) {
+            $query->whereDate('fecha_ingreso', '<=', $request->hasta);
+        }
+
+        $reparaciones = $query->latest()->get();
+
         return view('reparaciones.index', compact('reparaciones'));
     }
+
 
     public function create()
     {
