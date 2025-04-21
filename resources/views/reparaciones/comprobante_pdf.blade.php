@@ -180,7 +180,7 @@
                 <tr><td class="label">Código de Reparación:</td><td>#{{ $reparacion->id }}</td></tr>
                 <tr><td class="label">Cliente:</td><td>{{ $reparacion->cliente->nombre }}</td></tr>
                 <tr><td class="label">Teléfono:</td><td>{{ $reparacion->cliente->telefono ?? 'No especificado' }}</td></tr>
-                <tr><td class="label">Correo:</td><td>{{ $reparacion->cliente->email ?? 'No especificado' }}</td></tr>
+                <tr><td class="label">Correo:</td><td>{{ $reparacion->cliente->correo ?? 'No especificado' }}</td></tr>
             </table>
         </div>
 

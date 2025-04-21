@@ -6,6 +6,8 @@ use App\Models\Reparacion;
 use App\Models\SeguimientoReparacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReparacionListaMail;
 
 class SeguimientoReparacionController extends Controller
 {
@@ -18,6 +20,7 @@ class SeguimientoReparacionController extends Controller
 
     public function store(Request $request, Reparacion $reparacion)
     {
+        $reparacion->load('cliente');
         $request->validate([
             'descripcion' => 'required|string',
             'estado' => 'required|in:recibido,en_proceso,listo,entregado',
@@ -39,7 +42,23 @@ class SeguimientoReparacionController extends Controller
             'tecnico_id' => Auth::id(),
             'notificado' => false,
         ]);
+        // 🟡 Enviamos un correo al cliente si la reparación está lista
+        logger('🧪 Estado recibido: ' . $estado);
+        logger('🧪 Cliente cargado: ' . json_encode($reparacion->cliente));
 
+        if ($estado === 'listo' && $reparacion->cliente && $reparacion->cliente->correo) {
+            logger('📧 Enviando correo a: ' . $reparacion->cliente->correo);
+
+            try {
+                Mail::to($reparacion->cliente->correo)->send(new ReparacionListaMail($reparacion));
+                logger('✅ Correo enviado correctamente.');
+            } catch (\Exception $e) {
+                logger()->error('❌ Error al enviar correo: ' . $e->getMessage());
+            }
+        }
+
+
+        // 🟡 Actualizamos el estado de la reparación
         $reparacion->update(['estado' => $estado]);
 
         return back()->with('success', '✅ Seguimiento actualizado correctamente.');
