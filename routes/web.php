@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\{
     ProfileController,
     VentaController,
@@ -15,13 +15,15 @@ use App\Http\Controllers\{
     FacturaController,
     FacturaProductoController,
     FacturaReparacionController
+    
 };
 
 // Ruta raíz redirige al login
 Route::get('/', fn() => redirect()->route('login'));
 
 // Dashboard solo para autenticados
-Route::get('/dashboard', fn() => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'mostrar'])->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
 
@@ -75,6 +77,8 @@ Route::middleware('auth')->group(function () {
     // Ruta clásica (opcional si mantienes la anterior)
     Route::resource('facturas', FacturaController::class);
     Route::get('/facturas/{factura}/pdf', [FacturaController::class, 'descargarPDF'])->name('facturas.pdf');
+
+    
 });
 
 // Consulta pública de estado de reparación

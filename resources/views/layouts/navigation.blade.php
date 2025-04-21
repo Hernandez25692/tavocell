@@ -81,47 +81,48 @@
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="user-menu-btn">
-                            <div class="flex items-center">
-                                <div class="user-avatar">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                </div>
-                                <span class="user-name">{{ Auth::user()->name }}</span>
-                                <svg class="dropdown-chevron" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
+            <!-- Menú de Usuario con Alpine.js -->
+            <div class="hidden sm:flex sm:items-center sm:ms-6" x-data="{ openUser: false }" @click.away="openUser = false">
+                <div class="relative">
+                    <button @click="openUser = !openUser" class="user-menu-btn flex items-center">
+                        <div class="user-avatar">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        </div>
+                        <span class="user-name">{{ Auth::user()->name }}</span>
+                        <svg class="dropdown-chevron" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
 
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')" class="user-menu-item">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div x-show="openUser" x-transition
+                        class="absolute right-0 mt-2 w-48 bg-white rounded shadow-md z-50 py-2">
+                        <a href="{{ route('profile.edit') }}"
+                            class="user-menu-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <svg class="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                            {{ __('Perfil') }}
-                        </x-dropdown-link>
+                            Perfil
+                        </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <x-dropdown-link :href="route('logout')" class="user-menu-item"
-                                onclick="event.preventDefault(); this.closest('form').submit();">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <button type="submit"
+                                class="user-menu-item w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-100">
+                                <svg class="w-5 h-5 mr-2 inline-block" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
-                                {{ __('Cerrar Sesión') }}
-                            </x-dropdown-link>
+                                Cerrar sesión
+                            </button>
                         </form>
-                    </x-slot>
-                </x-dropdown>
+                    </div>
+                </div>
             </div>
+
 
             <!-- Hamburger (mobile) -->
             <div class="-me-2 flex items-center sm:hidden">
