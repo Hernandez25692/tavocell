@@ -20,22 +20,29 @@ class ConsultaReparacionController extends Controller
         ]);
 
         $cliente = Cliente::where('telefono', $request->identidad)
-                          ->orWhere('correo', $request->identidad)
-                          ->first();
+            ->orWhere('correo', $request->identidad)
+            ->first();
 
         if (!$cliente) {
             return back()->with('error', 'No se encontró ningún cliente con esos datos.');
         }
 
         $reparaciones = Reparacion::where('cliente_id', $cliente->id)
-                                  ->with('seguimientos')
-                                  ->latest()
-                                  ->get();
+            ->with('seguimientos')
+            ->latest()
+            ->get();
 
         if ($reparaciones->isEmpty()) {
             return back()->with('error', 'No hay reparaciones asociadas al cliente.');
         }
 
         return view('publico.resultado', compact('cliente', 'reparaciones'));
+    }
+
+    public function publico($id)
+    {
+        $reparacion = \App\Models\Reparacion::with('cliente', 'seguimientos')->findOrFail($id);
+
+        return view('reparaciones.seguimiento_publico', compact('reparacion'));
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\{
     ProfileController,
     VentaController,
@@ -79,5 +80,12 @@ Route::middleware('auth')->group(function () {
 // Consulta pública de estado de reparación
 Route::get('/estado-reparacion', [ConsultaReparacionController::class, 'index'])->name('consulta.reparacion');
 Route::post('/estado-reparacion', [ConsultaReparacionController::class, 'buscar'])->name('consulta.buscar');
+
+
+
+Route::get('/reparacion/{id}/seguimiento', [ConsultaReparacionController::class, 'publico'])
+    ->name('consulta.reparacion.publica');
+Route::get('/reparacion/{id}/seguimiento', [App\Http\Controllers\ConsultaReparacionController::class, 'publico'])
+    ->name('consulta.reparacion.publica');
 
 require __DIR__ . '/auth.php';

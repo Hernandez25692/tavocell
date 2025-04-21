@@ -47,4 +47,5 @@ class Reparacion extends Model
     {
         return $this->belongsTo(Factura::class);
     }
+    
 }

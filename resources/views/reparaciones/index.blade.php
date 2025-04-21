@@ -16,7 +16,17 @@
                     Nueva Reparación
                 </a>
             </div>
-    
+
+            @if (session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded mb-4">
+                    ✅ {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('comprobante'))
+                <iframe src="{{ asset('storage/comprobantes/' . session('comprobante')) }}" style="display: none;"></iframe>
+            @endif
+
             <div class="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
                 <table class="min-w-full table-auto text-sm text-left">
                     <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
@@ -45,9 +55,9 @@
         'entregado' => 'bg-blue-100 text-blue-700 border-blue-400',
         default => 'bg-gray-100 text-gray-700 border-gray-300',
     } }}">
+
                                         {{ ucfirst(str_replace('_', ' ', $rep->estado)) }}
                                     </span>
-
                                 </td>
                                 <td class="px-6 py-4">{{ $rep->fecha_ingreso }}</td>
                                 <td class="px-6 py-4 text-center">
@@ -89,4 +99,18 @@
             }
         </style>
     @endpush
+    @if (session('comprobante'))
+        <iframe id="comprobante-frame" src="{{ asset('storage/comprobantes/' . session('comprobante')) }}"
+            style="display:none;"></iframe>
+        <script>
+            window.onload = function() {
+                const link = document.createElement('a');
+                link.href = "{{ asset('storage/comprobantes/' . session('comprobante')) }}";
+                link.download = "{{ session('comprobante') }}";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        </script>
+    @endif
 @endsection

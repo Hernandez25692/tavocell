@@ -18,7 +18,10 @@
 
 <body>
 
-    @include('layouts.navigation') {{-- Si existe navegación --}}
+    @if (Auth::check())
+        @include('layouts.navigation')
+    @endif
+
 
     <main class="py-4 px-3 container">
         @yield('content')
@@ -58,4 +61,3 @@
         modal.classList.add('hidden');
     }
 </script>
-
