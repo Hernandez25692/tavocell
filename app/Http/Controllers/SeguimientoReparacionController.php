@@ -43,12 +43,10 @@ class SeguimientoReparacionController extends Controller
             'notificado' => false,
         ]);
         // 🟡 Enviamos un correo al cliente si la reparación está lista
-        logger('🧪 Estado recibido: ' . $estado);
-        logger('🧪 Cliente cargado: ' . json_encode($reparacion->cliente));
-
+        
         if ($estado === 'listo' && $reparacion->cliente && $reparacion->cliente->correo) {
             logger('📧 Enviando correo a: ' . $reparacion->cliente->correo);
-
+        
             try {
                 Mail::to($reparacion->cliente->correo)->send(new ReparacionListaMail($reparacion));
                 logger('✅ Correo enviado correctamente.');
@@ -56,7 +54,7 @@ class SeguimientoReparacionController extends Controller
                 logger()->error('❌ Error al enviar correo: ' . $e->getMessage());
             }
         }
-
+        
 
         // 🟡 Actualizamos el estado de la reparación
         $reparacion->update(['estado' => $estado]);
