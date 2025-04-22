@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReparacionListaMail;
+use App\Models\ImagenSeguimiento;
 
 class SeguimientoReparacionController extends Controller
 {
@@ -34,7 +35,8 @@ class SeguimientoReparacionController extends Controller
             return back()->with('error', '⚠️ No puedes marcar esta reparación como "Entregado" hasta que el cliente haya pagado el total.');
         }
 
-        SeguimientoReparacion::create([
+        // ✅ Crear seguimiento
+        $seguimiento = SeguimientoReparacion::create([
             'reparacion_id' => $reparacion->id,
             'descripcion' => $request->descripcion,
             'estado' => $estado,
@@ -42,21 +44,29 @@ class SeguimientoReparacionController extends Controller
             'tecnico_id' => Auth::id(),
             'notificado' => false,
         ]);
-        // 🟡 Enviamos un correo al cliente si la reparación está lista
-        
+
+        // ✅ Subir imágenes
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $imagen) {
+                $path = $imagen->store('seguimientos', 'public');
+
+                ImagenSeguimiento::create([
+                    'seguimiento_id' => $seguimiento->id,
+                    'ruta_imagen' => $path,
+                ]);
+            }
+        }
+
+        // ✅ Enviar correo si está listo
         if ($estado === 'listo' && $reparacion->cliente && $reparacion->cliente->correo) {
-            logger('📧 Enviando correo a: ' . $reparacion->cliente->correo);
-        
             try {
                 Mail::to($reparacion->cliente->correo)->send(new ReparacionListaMail($reparacion));
-                logger('✅ Correo enviado correctamente.');
             } catch (\Exception $e) {
                 logger()->error('❌ Error al enviar correo: ' . $e->getMessage());
             }
         }
-        
 
-        // 🟡 Actualizamos el estado de la reparación
+        // ✅ Actualizar estado de la reparación
         $reparacion->update(['estado' => $estado]);
 
         return back()->with('success', '✅ Seguimiento actualizado correctamente.');

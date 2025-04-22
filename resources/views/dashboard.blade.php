@@ -6,7 +6,6 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
             <h1 class="text-3xl font-bold text-gray-800 flex items-center">
-                <span class="bg-blue-100 text-blue-600 p-3 rounded-xl mr-3">📊</span>
                 Dashboard General
             </h1>
             <div class="mt-4 md:mt-0 text-sm text-gray-500">

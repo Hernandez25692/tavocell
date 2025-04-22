@@ -29,4 +29,9 @@ class SeguimientoReparacion extends Model
     {
         return $this->belongsTo(User::class, 'tecnico_id');
     }
+
+    public function imagenes()
+    {
+        return $this->hasMany(ImagenSeguimiento::class, 'seguimiento_id');
+    }
 }

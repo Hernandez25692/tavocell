@@ -14,10 +14,8 @@ class ConsultaReparacionPublicaController extends Controller
     }
 
     public function publico($id)
-{
-    $reparacion = \App\Models\Reparacion::with('cliente', 'seguimientos')->findOrFail($id);
-
-    return view('reparaciones.seguimiento_publico', compact('reparacion'));
-}
-
+    {
+        $reparacion = \App\Models\Reparacion::with('cliente', 'seguimientos.imagenes')->findOrFail($id);
+        return view('reparaciones.seguimiento_publico', compact('reparacion'));
+    }
 }

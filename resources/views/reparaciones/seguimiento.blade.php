@@ -44,7 +44,8 @@
             <!-- FORMULARIO DE AVANCE -->
             <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">📝 Nuevo Avance Técnico</h2>
-                <form action="{{ route('seguimientos.store', $reparacion) }}" method="POST" class="space-y-6">
+                <form action="{{ route('seguimientos.store', $reparacion) }}" method="POST" class="space-y-6"
+                    enctype="multipart/form-data">
                     @csrf
 
                     <div>
@@ -52,6 +53,15 @@
                         <textarea name="descripcion" required rows="3"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none shadow-sm"></textarea>
                     </div>
+
+                    <div class="mb-4">
+                        <label for="imagenes[]" class="block font-semibold text-gray-700">Subir imágenes del
+                            seguimiento</label>
+                        <input type="file" name="imagenes[]" multiple accept="image/*"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <p class="text-xs text-gray-500 mt-1">Puedes subir varias imágenes del estado actual del equipo.</p>
+                    </div>
+
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Estado:</label>
@@ -112,22 +122,54 @@
 
 
             <!-- HISTORIAL DE AVANCES (TIMELINE) -->
-            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-6">📋 Historial de Seguimiento</h2>
-                <ul class="relative border-l-4 border-indigo-300 pl-6 space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-xl border border-gray-200">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <svg class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Historial de Seguimiento
+                </h2>
+
+                <ul class="relative border-l-4 border-indigo-300 pl-6 space-y-8">
                     @forelse($reparacion->seguimientos as $seg)
                         <li class="relative">
+                            <!-- Punto de línea de tiempo -->
                             <div
-                                class="absolute -left-3 top-1 w-6 h-6 bg-indigo-500 rounded-full border-4 border-white shadow">
+                                class="absolute -left-3 top-1 w-6 h-6 bg-indigo-600 rounded-full border-4 border-white shadow-md z-10">
                             </div>
-                            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 shadow-sm">
-                                <div class="flex justify-between text-sm text-gray-600 mb-1">
-                                    <span><strong>Fecha:</strong> {{ $seg->fecha_avance }}</span>
-                                    <span><strong>Estado:</strong>
-                                        {{ ucfirst(str_replace('_', ' ', $seg->estado)) }}</span>
+
+                            <!-- Tarjeta de seguimiento -->
+                            <div
+                                class="bg-indigo-50 border border-indigo-200 rounded-xl p-5 shadow-md hover:shadow-lg transition-all">
+                                <div
+                                    class="flex flex-col md:flex-row justify-between md:items-center text-sm text-gray-600 mb-3 gap-2">
+                                    <div><strong>📅 Fecha:</strong> {{ $seg->created_at->isoFormat('D MMM YYYY, h:mm a') }}
+                                    </div>
+                                    <div><strong>📌 Estado:</strong> {{ ucfirst(str_replace('_', ' ', $seg->estado)) }}
+                                    </div>
+                                    <div><strong>👨‍🔧 Técnico:</strong> {{ $seg->tecnico->name ?? 'Sistema' }}</div>
                                 </div>
-                                <p class="text-gray-800 mb-1"><strong>Técnico:</strong> {{ $seg->tecnico->name }}</p>
-                                <p class="text-gray-700 text-sm">{{ $seg->descripcion }}</p>
+                                <div><strong>Descripción del avance:</strong>
+                                <p class="text-gray-800 text-sm leading-relaxed mb-2">
+                                    {{ $seg->descripcion }}
+                                </p>
+
+                                @if ($seg->imagenes && $seg->imagenes->count() > 0)
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
+                                        @foreach ($seg->imagenes as $img)
+                                            <a href="{{ asset('storage/' . $img->ruta_imagen) }}" target="_blank"
+                                                class="block group">
+                                                <div
+                                                    class="overflow-hidden rounded-lg border border-gray-300 shadow-sm group-hover:shadow-lg transition">
+                                                    <img src="{{ asset('storage/' . $img->ruta_imagen) }}"
+                                                        alt="Imagen seguimiento"
+                                                        class="w-full h-40 object-cover object-center group-hover:scale-105 transition duration-300">
+                                                </div>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
                         </li>
                     @empty
@@ -135,6 +177,7 @@
                     @endforelse
                 </ul>
             </div>
+
 
             <!-- BOTÓN VOLVER -->
             <div class="text-right">
