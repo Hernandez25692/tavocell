@@ -15,9 +15,12 @@ class CierreDiario extends Model
         'fecha',
         'total_ventas',
         'total_reparaciones',
+        'total_abonos',
         'total_efectivo',
+        'efectivo_fisico',
         'usuario_id',
     ];
+
 
     public function usuario()
     {

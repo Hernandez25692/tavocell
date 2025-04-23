@@ -87,6 +87,14 @@ class ReparacionController extends Controller
             'abono' => $request->abono ?? 0,
             'estado' => 'recibido',
         ]);
+        if ($request->filled('abono') && $request->abono > 0) {
+            \App\Models\AbonoReparacion::create([
+                'reparacion_id' => $reparacion->id,
+                'monto' => $request->abono,
+                'metodo_pago' => 'Inicial',
+                'observaciones' => 'Abono inicial al recibir equipo',
+            ]);
+        }
 
         // Generar código QR con la URL pública de seguimiento
         $qr = new \Milon\Barcode\DNS2D();
@@ -126,16 +134,20 @@ class ReparacionController extends Controller
             return redirect()->back()->with('error', 'Ya ha sido facturada.');
         }
 
-        $cliente_id = $reparacion->cliente?->id;
         $subtotal = $reparacion->costo_total;
-        $saldo = $subtotal - $reparacion->abono;
+        $abonado = $reparacion->abonos->sum('monto');
+        $saldo = $subtotal - $abonado;
+
+        if ($saldo <= 0) {
+            return back()->with('error', 'No hay saldo pendiente por cobrar. Ya está pagada.');
+        }
 
         $factura = Factura::create([
-            'cliente_id' => $cliente_id,
-            'usuario_id' => Auth::id(),
+            'cliente_id' => $reparacion->cliente_id,
+            'usuario_id' => auth()->id(),
             'metodo_pago' => 'Efectivo',
-            'subtotal' => $subtotal,
-            'total' => $subtotal,
+            'subtotal' => $saldo,
+            'total' => $saldo,
             'monto_recibido' => $saldo,
             'cambio' => 0,
         ]);
@@ -143,8 +155,8 @@ class ReparacionController extends Controller
         $factura->detalles()->create([
             'producto_id' => null,
             'cantidad' => 1,
-            'precio_unitario' => $subtotal,
-            'subtotal' => $subtotal,
+            'precio_unitario' => $saldo,
+            'subtotal' => $saldo,
             'descripcion' => "Reparación de {$reparacion->marca} {$reparacion->modelo}",
         ]);
 
@@ -154,26 +166,40 @@ class ReparacionController extends Controller
         ]);
 
         return redirect()->route('facturas_reparaciones.show', $factura->id)
-            ->with('success', 'Factura generada correctamente.');
+            ->with('success', 'Factura generada correctamente por el saldo pendiente.');
     }
+
 
     public function abonar(Request $request, Reparacion $reparacion)
     {
         $request->validate([
-            'nuevo_abono' => 'required|numeric|min:1',
+            'monto' => 'required|numeric|min:0.01',
+            'metodo_pago' => 'nullable|string|max:50',
+            'observaciones' => 'nullable|string|max:255',
         ]);
 
-        $nuevoTotal = $reparacion->abono + $request->nuevo_abono;
+        $nuevoAbono = $request->monto;
 
-        if ($nuevoTotal > $reparacion->costo_total) {
-            return back()->with('error', '⚠️ El abono excede el total de la reparación.');
+        // Evitar que se sobrepase el costo total
+        if (($reparacion->abono + $nuevoAbono) > $reparacion->costo_total) {
+            return back()->with('error', 'El abono supera el costo total de la reparación.');
         }
 
-        $reparacion->abono = $nuevoTotal;
+        // Guardar en historial
+        \App\Models\AbonoReparacion::create([
+            'reparacion_id' => $reparacion->id,
+            'monto' => $nuevoAbono,
+            'metodo_pago' => $request->metodo_pago,
+            'observaciones' => $request->observaciones,
+        ]);
+
+        // Actualizar campo acumulado
+        $reparacion->abono += $nuevoAbono;
         $reparacion->save();
 
-        return back()->with('success', '✅ Abono registrado correctamente.');
+        return back()->with('success', 'Abono registrado correctamente.');
     }
+
 
     // Métodos vacíos
     public function show(string $id) {}

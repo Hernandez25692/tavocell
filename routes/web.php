@@ -15,7 +15,6 @@ use App\Http\Controllers\{
     FacturaController,
     FacturaProductoController,
     FacturaReparacionController
-    
 };
 
 // Ruta raíz redirige al login
@@ -23,7 +22,6 @@ Route::get('/', fn() => redirect()->route('login'));
 
 // Dashboard solo para autenticados
 Route::get('/dashboard', [DashboardController::class, 'mostrar'])->middleware(['auth', 'verified'])->name('dashboard');
-
 
 Route::middleware('auth')->group(function () {
 
@@ -56,6 +54,8 @@ Route::middleware('auth')->group(function () {
     // Cierres diarios
     Route::get('cierres', [CierreDiarioController::class, 'index'])->name('cierres.index');
     Route::post('cierres', [CierreDiarioController::class, 'store'])->name('cierres.store');
+    Route::post('/cierres/{id}/descargar', [CierreDiarioController::class, 'descargar'])->name('cierres.descargar');
+    Route::post('/cierres/{id}/actualizar-efectivo', [CierreDiarioController::class, 'actualizarEfectivo'])->name('cierres.actualizarEfectivo');
 
     // FACTURAS DE PRODUCTOS (POS)
     Route::prefix('facturas-productos')->group(function () {
@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{factura}/pdf', [FacturaProductoController::class, 'descargarPDF'])->name('facturas_productos.pdf');
     });
 
+    // FACTURAS DE REPARACIONES
     Route::prefix('facturas-reparaciones')->group(function () {
         Route::get('/', [FacturaReparacionController::class, 'index'])->name('facturas_reparaciones.index');
         Route::get('/{factura}', [FacturaReparacionController::class, 'show'])->name('facturas_reparaciones.show');
@@ -73,23 +74,15 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{factura}', [FacturaReparacionController::class, 'destroy'])->name('facturas_reparaciones.destroy');
     });
 
-
-    // Ruta clásica (opcional si mantienes la anterior)
+    // Ruta clásica para facturas (si aún se usa)
     Route::resource('facturas', FacturaController::class);
     Route::get('/facturas/{factura}/pdf', [FacturaController::class, 'descargarPDF'])->name('facturas.pdf');
-
-    
 });
 
 // Consulta pública de estado de reparación
 Route::get('/estado-reparacion', [ConsultaReparacionController::class, 'index'])->name('consulta.reparacion');
 Route::post('/estado-reparacion', [ConsultaReparacionController::class, 'buscar'])->name('consulta.buscar');
 
-
-
-Route::get('/reparacion/{id}/seguimiento', [ConsultaReparacionController::class, 'publico'])
-    ->name('consulta.reparacion.publica');
-Route::get('/reparacion/{id}/seguimiento', [App\Http\Controllers\ConsultaReparacionController::class, 'publico'])
-    ->name('consulta.reparacion.publica');
+Route::get('/reparacion/{id}/seguimiento', [ConsultaReparacionController::class, 'publica'])->name('consulta.reparacion.publica');
 
 require __DIR__ . '/auth.php';

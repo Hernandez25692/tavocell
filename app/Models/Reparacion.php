@@ -47,5 +47,9 @@ class Reparacion extends Model
     {
         return $this->belongsTo(Factura::class);
     }
-    
+
+    public function abonos()
+    {
+        return $this->hasMany(\App\Models\AbonoReparacion::class);
+    }
 }

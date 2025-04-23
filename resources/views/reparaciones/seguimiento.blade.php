@@ -97,7 +97,7 @@
                     <form action="{{ route('reparaciones.abonar', $reparacion) }}" method="POST"
                         class="flex flex-col sm:flex-row items-center gap-3">
                         @csrf
-                        <input type="number" name="nuevo_abono" step="0.01" min="1" max="{{ $pendiente }}"
+                        <input type="number" name="monto" step="0.01" min="1" max="{{ $pendiente }}"
                             class="border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 w-full sm:w-auto"
                             placeholder="L. abonar">
                         <button type="submit"
@@ -163,6 +163,38 @@
                         <li class="text-gray-500 italic">No hay avances registrados aún.</li>
                     @endforelse
                 </ul>
+            </div>
+            <!-- HISTORIAL DE ABONOS -->
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-6">💰 Historial de Abonos</h2>
+
+                @if ($reparacion->abonos->isEmpty())
+                    <p class="text-gray-500 italic">No hay abonos registrados para esta reparación.</p>
+                @else
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm text-left border border-gray-200 rounded-lg shadow">
+                            <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
+                                <tr>
+                                    <th class="px-4 py-2">Fecha</th>
+                                    <th class="px-4 py-2">Monto (L.)</th>
+                                    <th class="px-4 py-2">Método de Pago</th>
+                                    <th class="px-4 py-2">Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700">
+                                @foreach ($reparacion->abonos as $abono)
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-4 py-2">{{ $abono->created_at->format('d/m/Y h:i A') }}</td>
+                                        <td class="px-4 py-2 font-semibold text-green-700">L.
+                                            {{ number_format($abono->monto, 2) }}</td>
+                                        <td class="px-4 py-2">{{ $abono->metodo_pago ?? 'N/A' }}</td>
+                                        <td class="px-4 py-2">{{ $abono->observaciones ?? '—' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endif
             </div>
 
             <!-- BOTÓN VOLVER -->
