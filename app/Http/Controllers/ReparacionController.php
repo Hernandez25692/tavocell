@@ -134,29 +134,26 @@ class ReparacionController extends Controller
             return redirect()->back()->with('error', 'Ya ha sido facturada.');
         }
 
+        $cliente_id = $reparacion->cliente?->id;
         $subtotal = $reparacion->costo_total;
-        $abonado = $reparacion->abonos->sum('monto');
-        $saldo = $subtotal - $abonado;
+        $saldo = $subtotal - $reparacion->abono;
 
-        if ($saldo <= 0) {
-            return back()->with('error', 'No hay saldo pendiente por cobrar. Ya está pagada.');
-        }
-
+        // Ya está pagado, entonces el monto recibido es 0 (no hay vuelto)
         $factura = Factura::create([
-            'cliente_id' => $reparacion->cliente_id,
-            'usuario_id' => auth()->id(),
+            'cliente_id' => $cliente_id,
+            'usuario_id' => Auth::id(),
             'metodo_pago' => 'Efectivo',
-            'subtotal' => $saldo,
-            'total' => $saldo,
-            'monto_recibido' => $saldo,
+            'subtotal' => $subtotal,
+            'total' => $subtotal,
+            'monto_recibido' => $saldo > 0 ? $saldo : 0,
             'cambio' => 0,
         ]);
 
         $factura->detalles()->create([
             'producto_id' => null,
             'cantidad' => 1,
-            'precio_unitario' => $saldo,
-            'subtotal' => $saldo,
+            'precio_unitario' => $subtotal,
+            'subtotal' => $subtotal,
             'descripcion' => "Reparación de {$reparacion->marca} {$reparacion->modelo}",
         ]);
 
@@ -166,7 +163,7 @@ class ReparacionController extends Controller
         ]);
 
         return redirect()->route('facturas_reparaciones.show', $factura->id)
-            ->with('success', 'Factura generada correctamente por el saldo pendiente.');
+            ->with('success', 'Factura generada correctamente.');
     }
 
 

@@ -35,9 +35,12 @@ class FacturaReparacionController extends Controller
     {
         $factura->load('cliente', 'usuario', 'detalles');
         $reparacion = Reparacion::where('factura_id', $factura->id)->first();
+
         $pdf = Pdf::loadView('facturas_reparaciones.factura_pdf', compact('factura', 'reparacion'));
-        return $pdf->stream("reparacion_{$factura->id}.pdf");
+
+        return $pdf->download("Factura_Reparacion_{$factura->id}.pdf");
     }
+
 
     public function destroy(Factura $factura)
     {

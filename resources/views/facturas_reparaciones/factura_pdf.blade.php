@@ -209,7 +209,7 @@
                 <td class="amount">L. {{ number_format($reparacion->costo_total, 2) }}</td>
             </tr>
             <tr>
-                <td class="label">Abono Inicial:</td>
+                <td class="label">Total Abono:</td>
                 <td class="amount">L. {{ number_format($reparacion->abono, 2) }}</td>
             </tr>
             <tr class="total-row">

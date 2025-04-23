@@ -30,7 +30,7 @@
                             class="inline-block px-3 py-1 rounded-full text-xs font-bold border shadow-sm
                         {{ match ($reparacion->estado) {
                             'pendiente' => 'bg-red-100 text-red-700 border-red-400',
-                            'en_proceso', 'en_proceso' => 'bg-yellow-100 text-yellow-800 border-yellow-400',
+                            'en_proceso', 'en proceso' => 'bg-yellow-100 text-yellow-800 border-yellow-400',
                             'listo' => 'bg-green-100 text-green-700 border-green-400',
                             'entregado' => 'bg-blue-100 text-blue-700 border-blue-400',
                             default => 'bg-gray-100 text-gray-700 border-gray-300',
@@ -114,8 +114,13 @@
                         💸 Generar Factura de Reparación
                     </button>
                 </form>
+            @elseif($reparacion->factura_id)
+                <!-- Ya tiene factura, mostrar botón de descarga -->
+                <a href="{{ route('facturas_reparaciones.pdf', $reparacion->factura_id) }}" target="_blank"
+                    class="mt-4 inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2 rounded-lg shadow">
+                    🧾 Descargar Factura PDF
+                </a>
             @endif
-
 
 
 
@@ -166,12 +171,35 @@
             </div>
             <!-- HISTORIAL DE ABONOS -->
             <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-6">💰 Historial de Abonos</h2>
+                <h2 class="text-xl font-bold text-gray-800 mb-2">💰 Historial de Abonos</h2>
+
+                <p class="mb-4 text-sm text-gray-600">
+                    💵 <span class="font-semibold">Costo Total de la Reparación:</span>
+                    L. {{ number_format($reparacion->costo_total, 2) }}
+                </p>
+
+                @php
+                    $abonado = $reparacion->abonos->sum('monto');
+                    $porcentaje = $reparacion->costo_total > 0 ? ($abonado / $reparacion->costo_total) * 100 : 0;
+                @endphp
+
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 mb-1 font-medium">
+                        🔄 <span class="text-indigo-700">Progreso de pago:</span> L. {{ number_format($abonado, 2) }} /
+                        {{ number_format($reparacion->costo_total, 2) }}
+                    </p>
+                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                        <div class="bg-indigo-600 h-4 text-xs text-white text-center leading-4 transition-all duration-500"
+                            style="width: {{ $porcentaje }}%">
+                            {{ number_format($porcentaje, 0) }}%
+                        </div>
+                    </div>
+                </div>
 
                 @if ($reparacion->abonos->isEmpty())
                     <p class="text-gray-500 italic">No hay abonos registrados para esta reparación.</p>
                 @else
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto mt-4">
                         <table class="min-w-full text-sm text-left border border-gray-200 rounded-lg shadow">
                             <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
                                 <tr>
@@ -187,8 +215,8 @@
                                         <td class="px-4 py-2">{{ $abono->created_at->format('d/m/Y h:i A') }}</td>
                                         <td class="px-4 py-2 font-semibold text-green-700">L.
                                             {{ number_format($abono->monto, 2) }}</td>
-                                        <td class="px-4 py-2">{{ $abono->metodo_pago ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2">{{ $abono->observaciones ?? '—' }}</td>
+                                        <td class="px-4 py-2">{{ $abono->metodo_pago ?? 'Agregado manual' }}</td>
+                                        <td class="px-4 py-2">{{ $abono->observaciones ?? 'Desde la vista Seguimiento' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -196,6 +224,7 @@
                     </div>
                 @endif
             </div>
+
 
             <!-- BOTÓN VOLVER -->
             <div class="text-right">
