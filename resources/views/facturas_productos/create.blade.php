@@ -58,35 +58,59 @@
                             </select>
                         </div>
 
-                        <!-- Card Buscar Producto -->
-                        <div
-                            class="bg-gradient-to-br from-gray-50 to-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Código de Barras</label>
+                        <!-- Card Buscar Producto Compacto -->
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
+                            <h2 class="text-base font-semibold text-gray-700">🔎 Agregar Producto</h2>
+
+                            <!-- Código de Barras -->
+                            <label class="block text-sm font-medium text-gray-600">Código de Barras</label>
                             <div class="flex gap-2">
                                 <input type="text" id="codigo-producto"
-                                    class="flex-grow px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition"
+                                    class="flex-grow px-3 py-1.5 rounded-md border border-gray-300 focus:ring-1 focus:ring-indigo-300 focus:border-indigo-400 text-sm"
                                     placeholder="Escanear o escribir código">
-                            </div>
-                            <br>
-                            <div>
                                 <button type="button" onclick="buscarProducto()"
-                                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transform hover:scale-105 transition flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
+                                    class="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 transition">
                                     Buscar
                                 </button>
                             </div>
-                            <label class="block text-sm font-medium mt-4 text-gray-700 mb-2">Buscar por nombre</label>
+
+                            <!-- Buscar por nombre -->
+                            <label class="block text-sm font-medium text-gray-600">Buscar por nombre</label>
                             <input type="text" id="nombre-producto"
-                                class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition"
-                                placeholder="Buscar producto...">
+                                class="w-full px-3 py-1.5 rounded-md border border-gray-300 focus:ring-1 focus:ring-indigo-300 focus:border-indigo-400 text-sm"
+                                placeholder="Ej. Teclado gamer">
                             <div id="sugerencias-productos"
-                                class="hidden mt-2 border border-gray-200 rounded-lg bg-white shadow-lg max-h-60 overflow-y-auto z-50 absolute w-96">
+                                class="hidden mt-2 border border-gray-200 rounded-md bg-white shadow-lg max-h-48 overflow-y-auto z-50 absolute w-80">
                             </div>
                         </div>
+
+                        <!-- Card Consulta Precio Compacto -->
+                        <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-3">
+                            <h2 class="text-base font-semibold text-gray-700">💲 Consultar Precio</h2>
+
+                            <div class="flex gap-2">
+                                <input type="text" id="codigo-consulta"
+                                    class="flex-grow px-3 py-1.5 rounded-md border border-gray-300 focus:ring-1 focus:ring-indigo-300 focus:border-indigo-400 text-sm"
+                                    placeholder="Ej. 00123">
+                                <button type="button" onclick="consultarPrecio()"
+                                    class="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 transition">
+                                    Consultar
+                                </button>
+                            </div>
+
+                            <!-- Resultado consulta -->
+                            <div id="resultado-consulta" class="hidden border-t pt-3 text-sm space-y-1 text-gray-700">
+                                <p><strong>Código:</strong> <span id="codigo-resultado"></span></p>
+                                <p><strong>Nombre:</strong> <span id="nombre-resultado"></span></p>
+                                <p><strong>Precio:</strong> L. <span id="precio-resultado"></span></p>
+                                <button type="button" onclick="agregarProductoConsultado()"
+                                    class="mt-2 px-3 py-1.5 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition">
+                                    ➕ Agregar al Carrito
+                                </button>
+                            </div>
+                        </div>
+
+
                     </div>
 
                     <!-- Sección Productos y Resumen -->
@@ -464,7 +488,31 @@
             const producto = productos.find(p => p.codigo === codigo);
 
             if (!producto) {
-                mostrarAlerta('error', 'Producto no encontrado');
+                const alertaId = 'modal-error-producto-' + Date.now();
+                const modal = document.createElement('div');
+                modal.id = alertaId;
+                modal.className =
+                    'fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[9999] animate-fade-in';
+
+                modal.innerHTML = `
+        <div class="bg-white max-w-sm w-full rounded-xl shadow-2xl p-6 text-center animate-modal-in">
+            <div class="text-red-600 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">¡Producto no encontrado!</h2>
+            <p class="text-sm text-gray-600 mb-4">Verifica el código o intenta con otro producto.</p>
+            <button onclick="document.getElementById('${alertaId}').remove()"
+                class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition transform hover:scale-105">
+                Cerrar
+            </button>
+        </div>
+    `;
+
+                document.body.appendChild(modal);
+
                 const input = document.getElementById('codigo-producto');
                 input.classList.add('ring-2', 'ring-red-500', 'animate-shake');
                 setTimeout(() => {
@@ -472,6 +520,7 @@
                 }, 1000);
                 return;
             }
+
 
 
             const existente = carrito.find(p => p.id === producto.id);
@@ -501,6 +550,77 @@
             renderTabla();
             localStorage.setItem('carrito_tavocell', JSON.stringify(carrito));
 
+        }
+
+        let productoConsultado = null;
+
+        function consultarPrecio() {
+            const codigo = document.getElementById('codigo-consulta').value.trim();
+            const producto = productos.find(p => p.codigo === codigo);
+
+            if (!producto) {
+                const alertaId = 'modal-consulta-noencontrado-' + Date.now();
+                const modal = document.createElement('div');
+                modal.id = alertaId;
+                modal.className =
+                    'fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[9999] animate-fade-in';
+
+                modal.innerHTML = `
+        <div class="bg-white max-w-sm w-full rounded-xl shadow-2xl p-6 text-center animate-modal-in">
+            <div class="text-yellow-500 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h2 class="text-lg font-bold text-gray-800 mb-2">Producto no encontrado</h2>
+            <p class="text-sm text-gray-600 mb-4">El código ingresado no corresponde a ningún producto en el sistema.</p>
+            <button onclick="document.getElementById('${alertaId}').remove()"
+                class="px-5 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition transform hover:scale-105">
+                Entendido
+            </button>
+        </div>
+    `;
+
+                document.body.appendChild(modal);
+
+                document.getElementById('resultado-consulta').classList.add('hidden');
+                productoConsultado = null;
+                return;
+            }
+
+
+            productoConsultado = producto;
+            document.getElementById('codigo-resultado').textContent = producto.codigo;
+            document.getElementById('nombre-resultado').textContent = producto.nombre;
+            document.getElementById('precio-resultado').textContent = parseFloat(producto.precio_venta).toFixed(2);
+            document.getElementById('resultado-consulta').classList.remove('hidden');
+        }
+
+        function agregarProductoConsultado() {
+            if (!productoConsultado) return;
+
+            const existente = carrito.find(p => p.id === productoConsultado.id);
+            if (existente) {
+                existente.cantidad += 1;
+            } else {
+                carrito.push({
+                    id: productoConsultado.id,
+                    codigo: productoConsultado.codigo,
+                    nombre: productoConsultado.nombre,
+                    precio: parseFloat(productoConsultado.precio_venta),
+                    cantidad: 1
+                });
+            }
+
+            renderTabla();
+            localStorage.setItem('carrito_tavocell', JSON.stringify(carrito));
+            mostrarAlerta('success', 'Producto agregado al carrito');
+
+            // Limpiar
+            document.getElementById('codigo-consulta').value = '';
+            document.getElementById('resultado-consulta').classList.add('hidden');
+            productoConsultado = null;
         }
 
         function renderTabla() {
