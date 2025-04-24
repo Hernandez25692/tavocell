@@ -118,6 +118,11 @@
                                 <p id="total-pagar" class="text-2xl font-bold text-green-600 animate-pulse">L. 0.00</p>
                             </div>
                             <div class="flex justify-end space-x-3">
+                                <!-- Botón Limpiar Carrito -->
+                                <button type="button" onclick="limpiarCarrito()"
+                                    class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transform hover:scale-105 transition flex items-center gap-2 shadow-lg">
+                                    🗑 Limpiar Carrito
+                                </button>
 
                                 <button type="button" onclick="mostrarResumen()"
                                     class="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition flex items-center gap-2 shadow-lg">
@@ -276,6 +281,26 @@
                 }
             }
 
+            @keyframes shake {
+
+                0%,
+                100% {
+                    transform: translateX(0);
+                }
+
+                25% {
+                    transform: translateX(-4px);
+                }
+
+                50% {
+                    transform: translateX(4px);
+                }
+
+                75% {
+                    transform: translateX(-4px);
+                }
+            }
+
             .text-shadow {
                 text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
             }
@@ -388,6 +413,13 @@
             }
         });
 
+        function limpiarCarrito() {
+            if (confirm('¿Estás seguro de limpiar toda la factura?')) {
+                carrito = [];
+                localStorage.removeItem('carrito_tavocell');
+                renderTabla();
+            }
+        }
 
         document.getElementById('buscar-identidad').addEventListener('input', function() {
             const identidad = this.value.trim();
@@ -432,7 +464,7 @@
             const producto = productos.find(p => p.codigo === codigo);
 
             if (!producto) {
-                // Mostrar alerta visual
+                mostrarAlerta('error', 'Producto no encontrado');
                 const input = document.getElementById('codigo-producto');
                 input.classList.add('ring-2', 'ring-red-500', 'animate-shake');
                 setTimeout(() => {
@@ -440,6 +472,7 @@
                 }, 1000);
                 return;
             }
+
 
             const existente = carrito.find(p => p.id === producto.id);
             if (existente) {
@@ -529,43 +562,80 @@
         }
 
         function eliminarProducto(i) {
-            // Animación antes de eliminar
-            const row = document.querySelector(`#tabla-productos tr:nth-child(${i+1})`);
-            if (row) {
-                row.classList.add('opacity-0', 'transition-opacity', 'duration-300');
-                setTimeout(() => {
-                    carrito.splice(i, 1);
-                    renderTabla();
-                }, 300);
-            } else {
-                carrito.splice(i, 1);
-                renderTabla();
-            }
+            carrito.splice(i, 1);
+            localStorage.setItem('carrito_tavocell', JSON.stringify(carrito));
+            renderTabla();
+            mostrarAlerta('success', 'Producto eliminado del carrito');
         }
+
+        function limpiarCarrito() {
+            // Mostrar un modal de confirmación centrado
+            const id = 'confirmar-limpiar-' + Date.now();
+            const modal = document.createElement('div');
+            modal.id = id;
+            modal.className = `
+        fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] animate-fade-in
+    `;
+            modal.innerHTML = `
+        <div class="bg-white max-w-sm w-full rounded-xl shadow-2xl p-6 text-center animate-modal-in">
+            <h2 class="text-lg font-bold text-gray-800 mb-2">¿Estás seguro?</h2>
+            <p class="text-sm text-gray-600 mb-4">Se eliminarán todos los productos de la factura actual.</p>
+            <div class="flex justify-center gap-4">
+                <button onclick="document.getElementById('${id}').remove()"
+                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition transform hover:scale-105">
+                    Cancelar
+                </button>
+                <button onclick="ejecutarLimpiezaCarrito('${id}')"
+                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition transform hover:scale-105">
+                    Sí, limpiar
+                </button>
+            </div>
+        </div>
+    `;
+            document.body.appendChild(modal);
+        }
+
+        function ejecutarLimpiezaCarrito(id) {
+            carrito = [];
+            localStorage.removeItem('carrito_tavocell');
+            renderTabla();
+            mostrarAlerta('warning', 'Factura vaciada');
+            document.getElementById(id).remove();
+        }
+
+
 
 
 
         function mostrarResumen() {
             if (!carrito.length) {
-                // Mostrar alerta visual
-                const alert = document.createElement('div');
-                alert.className =
-                    'fixed top-4 right-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-lg z-50 animate-bounce-in';
-                alert.innerHTML = `
-            <div class="flex items-center">
-                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-                <strong>¡Atención!</strong> Agrega productos a la factura
-            </div>`;
-                document.body.appendChild(alert);
-                setTimeout(() => {
-                    alert.classList.add('opacity-0', 'transition-opacity', 'duration-300');
-                    setTimeout(() => alert.remove(), 300);
-                }, 3000);
+                // Crear modal centrado profesional cuando no hay productos
+                const id = 'alerta-sin-productos-' + Date.now();
+                const modal = document.createElement('div');
+                modal.id = id;
+                modal.className =
+                    'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] animate-fade-in';
+                modal.innerHTML = `
+            <div class="bg-white max-w-sm w-full rounded-2xl shadow-2xl p-6 text-center animate-modal-in">
+                <div class="flex justify-center items-center mb-4 text-red-600">
+                    <svg class="w-8 h-8 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <h2 class="text-lg font-bold">¡Atención!</h2>
+                </div>
+                <p class="text-sm text-gray-700 mb-5">Agrega productos a la factura antes de continuar.</p>
+                <button onclick="document.getElementById('${id}').remove()"
+                    class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition transform hover:scale-105">
+                    Entendido
+                </button>
+            </div>
+        `;
+                document.body.appendChild(modal);
                 return;
             }
 
+            // Mostrar resumen si hay productos
             const resumen = carrito.map(p => `
         <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
             <span>${p.nombre}</span>
@@ -584,7 +654,6 @@
             document.getElementById('monto-cambio').value = 'L. 0.00';
             document.getElementById('mensaje-error').classList.add('hidden');
 
-            // Autoenfocar el input de monto recibido
             setTimeout(() => {
                 document.getElementById('monto-recibido').focus();
             }, 300);
@@ -621,7 +690,6 @@
             const error = document.getElementById('mensaje-error');
 
             if (recibido < total) {
-                // Efecto de error
                 document.getElementById('monto-recibido').classList.add('ring-2', 'ring-red-500', 'animate-shake');
                 setTimeout(() => {
                     document.getElementById('monto-recibido').classList.remove('ring-2', 'ring-red-500',
@@ -634,7 +702,7 @@
             document.getElementById('monto-recibido-hidden').value = recibido.toFixed(2);
             cerrarModal();
             localStorage.removeItem('carrito_tavocell');
-            // Mostrar loader antes de enviar
+
             const loader = document.createElement('div');
             loader.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
             loader.innerHTML = `
@@ -644,10 +712,48 @@
         </div>`;
             document.body.appendChild(loader);
 
-            // Enviar formulario
             setTimeout(() => {
                 document.getElementById('factura-form').submit();
             }, 1000);
+        }
+    </script>
+
+    <!-- Contenedor de Alertas Personalizadas -->
+    <div id="toast-container" class="fixed top-4 right-4 space-y-4 z-[9999]"></div>
+
+    <script>
+        function mostrarAlerta(tipo = 'info', mensaje = 'Mensaje genérico', duracion = 3000) {
+            const colores = {
+                info: 'bg-blue-100 border-blue-500 text-blue-700',
+                success: 'bg-green-100 border-green-500 text-green-700',
+                warning: 'bg-yellow-100 border-yellow-500 text-yellow-700',
+                error: 'bg-red-100 border-red-500 text-red-700',
+            };
+
+            const iconos = {
+                info: 'ℹ️',
+                success: '✅',
+                warning: '⚠️',
+                error: '❌',
+            };
+
+            const alerta = document.createElement('div');
+            alerta.className =
+                `toast ${colores[tipo]} border-l-4 p-4 rounded-lg shadow-lg animate-bounce-in transition-opacity`;
+            alerta.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span class="text-xl">${iconos[tipo]}</span>
+                <span>${mensaje}</span>
+            </div>
+        `;
+
+            const contenedor = document.getElementById('toast-container');
+            contenedor.appendChild(alerta);
+
+            setTimeout(() => {
+                alerta.classList.add('opacity-0');
+                setTimeout(() => alerta.remove(), 300);
+            }, duracion);
         }
     </script>
 @endsection

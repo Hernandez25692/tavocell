@@ -163,7 +163,7 @@
     </div>
 
     @if ($esCopia)
-        <div class="copia">COPIA DE FACTURA - NO VÁLIDA PARA CRÉDITO FISCAL</div>
+        <div class="copia">COPIA DE FACTURA</div>
     @else
         <div class="copia">FACTURA ORIGINAL</div>
     @endif
