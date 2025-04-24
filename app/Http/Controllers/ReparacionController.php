@@ -27,11 +27,13 @@ class ReparacionController extends Controller
                 $q->where('nombre', 'like', '%' . $request->cliente . '%');
             });
         }
+
         if ($request->filled('identidad')) {
             $query->whereHas('cliente', function ($q) use ($request) {
                 $q->where('identidad', 'like', '%' . $request->identidad . '%');
             });
         }
+
         // Filtro por estado
         if ($request->filled('estado')) {
             $query->where('estado', $request->estado);
@@ -45,10 +47,12 @@ class ReparacionController extends Controller
             $query->whereDate('fecha_ingreso', '<=', $request->hasta);
         }
 
-        $reparaciones = $query->latest()->get();
+        // APLICAR PAGINACIÓN CORRECTAMENTE
+        $reparaciones = $query->orderByDesc('fecha_ingreso')->paginate(10);
 
         return view('reparaciones.index', compact('reparaciones'));
     }
+
 
 
     public function create()
