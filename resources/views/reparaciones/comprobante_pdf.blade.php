@@ -210,6 +210,8 @@
                 <div class="signature-text">Firma del Cliente</div>
                 <div class="signature-line"></div>
             </div>
+            <br>
+            <br>
             <div class="qr-section">
                 <img src="{{ $qrPath }}" class="qr" alt="Código QR">
                 <div class="qr-text">Escanee para dar seguimiento</div>

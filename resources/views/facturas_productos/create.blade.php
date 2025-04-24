@@ -69,7 +69,7 @@
                             </div>
                             <br>
                             <div>
-                            <button type="button" onclick="buscarProducto()"
+                                <button type="button" onclick="buscarProducto()"
                                     class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transform hover:scale-105 transition flex items-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -355,6 +355,17 @@
         const clientes = @json($clientes);
         let carrito = [];
 
+        // Restaurar carrito desde localStorage si existe
+        if (localStorage.getItem('carrito_tavocell')) {
+            try {
+                carrito = JSON.parse(localStorage.getItem('carrito_tavocell'));
+                renderTabla(); // volver a dibujar la tabla al cargar
+            } catch (e) {
+                console.error('Error al cargar carrito desde localStorage:', e);
+                carrito = [];
+            }
+        }
+
         // Evitar recarga accidental con Enter si hay productos en el carrito
         window.addEventListener('keydown', function(event) {
             const esEnter = event.key === 'Enter';
@@ -455,6 +466,8 @@
 
             document.getElementById('codigo-producto').value = '';
             renderTabla();
+            localStorage.setItem('carrito_tavocell', JSON.stringify(carrito));
+
         }
 
         function renderTabla() {
@@ -620,7 +633,7 @@
             error.classList.add('hidden');
             document.getElementById('monto-recibido-hidden').value = recibido.toFixed(2);
             cerrarModal();
-
+            localStorage.removeItem('carrito_tavocell');
             // Mostrar loader antes de enviar
             const loader = document.createElement('div');
             loader.className = 'fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50';
