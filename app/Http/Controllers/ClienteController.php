@@ -7,11 +7,19 @@ use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $clientes = Cliente::latest()->paginate(10);
+        $clientes = \App\Models\Cliente::query();
+
+        if ($request->has('identidad') && $request->identidad != '') {
+            $clientes->where('identidad', 'like', '%' . $request->identidad . '%');
+        }
+
+        $clientes = $clientes->latest()->paginate(10);
+
         return view('clientes.index', compact('clientes'));
     }
+
 
     public function create()
     {
