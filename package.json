@@ -14,8 +14,7 @@
         "vite": "^4.4.9"
     },
     "dependencies": {
-        "alpinejs": "^3.14.9"
+        "alpinejs": "^3.14.9",
+        "countup.js": "^2.8.1"
     }
-
-    
 }

@@ -74,9 +74,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{factura}', [FacturaReparacionController::class, 'destroy'])->name('facturas_reparaciones.destroy');
     });
 
-    // Ruta clásica para facturas (si aún se usa)
+    // Ruta clásica para facturas 
     Route::resource('facturas', FacturaController::class);
     Route::get('/facturas/{factura}/pdf', [FacturaController::class, 'descargarPDF'])->name('facturas.pdf');
+
+    
 });
 
 // Consulta pública de estado de reparación
