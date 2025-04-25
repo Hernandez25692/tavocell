@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
 
     \App\Models\Reparacion::factory(10)->create();
     \App\Models\SeguimientoReparacion::factory(20)->create();
+
+    $this->call(RoleSeeder::class);
+
 }
 
 }

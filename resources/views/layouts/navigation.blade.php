@@ -13,72 +13,89 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden sm:flex sm:items-center sm:space-x-2 ml-6">
-                    <!-- Productos -->
-                    <div class="relative group" x-data="{ open: false }" @mouseenter="open = true"
-                        @mouseleave="open = false">
-                        <button class="nav-dropdown-btn">
-                            <span class="nav-icon">📦</span>
-                            <span>Productos</span>
-                            <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <div class="nav-dropdown-menu" x-show="open" x-transition>
-                            <x-nav-link :href="route('productos.index')" class="nav-dropdown-item">
-                                <span class="nav-icon">📋</span> Ver Productos
-                            </x-nav-link>
-                            <x-nav-link :href="route('inventario.index')" class="nav-dropdown-item">
-                                <span class="nav-icon">📥</span> Ingreso Inventario
-                            </x-nav-link>
+                    @role('admin|cajero')
+                        <!-- Productos (solo admin o cajero) -->
+                        <div class="relative group" x-data="{ open: false }" @mouseenter="open = true"
+                            @mouseleave="open = false">
+                            <button class="nav-dropdown-btn">
+                                <span class="nav-icon">📦</span>
+                                <span>Productos</span>
+                                <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="nav-dropdown-menu" x-show="open" x-transition>
+                                <x-nav-link :href="route('productos.index')" class="nav-dropdown-item">
+                                    <span class="nav-icon">📋</span> Ver Productos
+                                </x-nav-link>
+                                @role('admin')
+                                    <x-nav-link :href="route('inventario.index')" class="nav-dropdown-item">
+                                        <span class="nav-icon">📥</span> Ingreso Inventario
+                                    </x-nav-link>
+                                @endrole
+                            </div>
                         </div>
-                    </div>
+                    @endrole
 
-                    <!-- Facturación -->
-                    <div class="relative group" x-data="{ open: false }" @mouseenter="open = true"
-                        @mouseleave="open = false">
-                        <button class="nav-dropdown-btn">
-                            <span class="nav-icon">💸</span>
-                            <span>Facturación</span>
-                            <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        <div class="nav-dropdown-menu" x-show="open" x-transition>
-                            <x-nav-link :href="route('facturas_productos.create')" class="nav-dropdown-item">
-                                <span class="nav-icon">🛒</span> Nueva Factura Producto
-                            </x-nav-link>
-                            <x-nav-link :href="route('facturas_productos.index')" class="nav-dropdown-item">
-                                <span class="nav-icon">📄</span> Historial Productos
-                            </x-nav-link>
-                            <x-nav-link :href="route('facturas_reparaciones.index')" class="nav-dropdown-item">
-                                <span class="nav-icon">🔧</span> Historial Reparaciones
-                            </x-nav-link>
-
-                            <x-nav-link :href="route('cierres.index')" class="nav-dropdown-item">
-                                <span class="nav-icon">🔒</span> Cierres Diarios
-                            </x-nav-link>
+                    @role('admin|cajero')
+                        <!-- Facturación -->
+                        <div class="relative group" x-data="{ open: false }" @mouseenter="open = true"
+                            @mouseleave="open = false">
+                            <button class="nav-dropdown-btn">
+                                <span class="nav-icon">💸</span>
+                                <span>Facturación</span>
+                                <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div class="nav-dropdown-menu" x-show="open" x-transition>
+                                <x-nav-link :href="route('facturas_productos.create')" class="nav-dropdown-item">
+                                    <span class="nav-icon">🛒</span> Nueva Factura Producto
+                                </x-nav-link>
+                                <x-nav-link :href="route('facturas_productos.index')" class="nav-dropdown-item">
+                                    <span class="nav-icon">📄</span> Historial Productos
+                                </x-nav-link>
+                                <x-nav-link :href="route('facturas_reparaciones.index')" class="nav-dropdown-item">
+                                    <span class="nav-icon">🔧</span> Historial Reparaciones
+                                </x-nav-link>
+                                @role('admin')
+                                    <x-nav-link :href="route('cierres.index')" class="nav-dropdown-item">
+                                        <span class="nav-icon">🔒</span> Cierres Diarios
+                                    </x-nav-link>
+                                @endrole
+                            </div>
                         </div>
-                    </div>
+                    @endrole
 
+                    @role('admin|cajero')
+                        <!-- Clientes -->
+                        <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="nav-item">
+                            <span class="nav-icon">👤</span>
+                            <span>Clientes</span>
+                        </x-nav-link>
+                    @endrole
 
+                    @role('admin|cajero|tecnico')
+                        <!-- Reparaciones -->
+                        <x-nav-link :href="route('reparaciones.index')" :active="request()->routeIs('reparaciones.*')" class="nav-item">
+                            <span class="nav-icon">🛠️</span>
+                            <span>Reparaciones</span>
+                        </x-nav-link>
+                    @endrole
 
-
-                    <!-- Clientes -->
-                    <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="nav-item">
-                        <span class="nav-icon">👤</span>
-                        <span>Clientes</span>
-                    </x-nav-link>
-
-                    <!-- Reparaciones -->
-                    <x-nav-link :href="route('reparaciones.index')" :active="request()->routeIs('reparaciones.*')" class="nav-item">
-                        <span class="nav-icon">🛠️</span>
-                        <span>Reparaciones</span>
-                    </x-nav-link>
+                    @role('admin')
+                        <!-- Usuarios -->
+                        <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')" class="nav-item">
+                            <span class="nav-icon">🧑‍💼</span>
+                            <span>Usuarios</span>
+                        </x-nav-link>
+                    @endrole
                 </div>
+
             </div>
 
             <!-- Menú de Usuario con Alpine.js -->
@@ -149,48 +166,65 @@
                 <span class="nav-icon">📊</span> Dashboard
             </x-responsive-nav-link>
 
-            <div class="mobile-nav-group">
-                <div class="mobile-nav-header">
-                    <span class="nav-icon">📦</span> Productos
+            @role('admin|cajero')
+                <div class="mobile-nav-group">
+                    <div class="mobile-nav-header">
+                        <span class="nav-icon">📦</span> Productos
+                    </div>
+                    <div class="mobile-nav-submenu">
+                        <x-responsive-nav-link :href="route('productos.index')" class="mobile-nav-subitem">
+                            <span class="nav-icon">📋</span> Ver Productos
+                        </x-responsive-nav-link>
+                        @role('admin')
+                            <x-responsive-nav-link :href="route('inventario.index')" class="mobile-nav-subitem">
+                                <span class="nav-icon">📥</span> Ingreso Inventario
+                            </x-responsive-nav-link>
+                        @endrole
+                    </div>
                 </div>
-                <div class="mobile-nav-submenu">
-                    <x-responsive-nav-link :href="route('productos.index')" class="mobile-nav-subitem">
-                        <span class="nav-icon">📋</span> Ver Productos
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('inventario.index')" class="mobile-nav-subitem">
-                        <span class="nav-icon">📥</span> Ingreso Inventario
-                    </x-responsive-nav-link>
+            @endrole
+
+            @role('admin|cajero')
+                <div class="mobile-nav-group">
+                    <div class="mobile-nav-header">
+                        <span class="nav-icon">💸</span> Facturación
+                    </div>
+                    <div class="mobile-nav-submenu">
+                        <x-responsive-nav-link :href="route('facturas_productos.create')" class="mobile-nav-subitem">
+                            <span class="nav-icon">🛒</span> Nueva Factura Producto
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('facturas_productos.index')" class="mobile-nav-subitem">
+                            <span class="nav-icon">📄</span> Historial Productos
+                        </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('facturas_reparaciones.index')" class="mobile-nav-subitem">
+                            <span class="nav-icon">🔧</span> Historial Reparaciones
+                        </x-responsive-nav-link>
+                        @role('admin')
+                            <x-responsive-nav-link :href="route('cierres.index')" class="mobile-nav-subitem">
+                                <span class="nav-icon">🔒</span> Cierres
+                            </x-responsive-nav-link>
+                        @endrole
+                    </div>
                 </div>
-            </div>
+            @endrole
 
-            <div class="mobile-nav-group">
-                <div class="mobile-nav-header">
-                    <span class="nav-icon">💸</span> Ventas
-                </div>
-                <div class="mobile-nav-submenu">
-                    <x-responsive-nav-link :href="route('facturas_productos.create')" class="mobile-nav-subitem">
-                        <span class="nav-icon">🛒</span> Nueva Factura Producto
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('facturas_productos.index')" class="mobile-nav-subitem">
-                        <span class="nav-icon">📄</span> Historial Productos
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('facturas_reparaciones.index')" class="mobile-nav-subitem">
-                        <span class="nav-icon">🔧</span> Historial Reparaciones
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('cierres.index')" class="mobile-nav-subitem">
-                        <span class="nav-icon">🔒</span> Cierres
-                    </x-responsive-nav-link>
-                </div>
+            @role('admin|cajero')
+                <x-responsive-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="mobile-nav-item">
+                    <span class="nav-icon">👤</span> Clientes
+                </x-responsive-nav-link>
+            @endrole
 
-            </div>
+            @role('admin|cajero|tecnico')
+                <x-responsive-nav-link :href="route('reparaciones.index')" :active="request()->routeIs('reparaciones.*')" class="mobile-nav-item">
+                    <span class="nav-icon">🛠️</span> Reparaciones
+                </x-responsive-nav-link>
+            @endrole
 
-            <x-responsive-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="mobile-nav-item">
-                <span class="nav-icon">👤</span> Clientes
-            </x-responsive-nav-link>
-
-            <x-responsive-nav-link :href="route('reparaciones.index')" :active="request()->routeIs('reparaciones.*')" class="mobile-nav-item">
-                <span class="nav-icon">🛠️</span> Reparaciones
-            </x-responsive-nav-link>
+            @role('admin')
+                <x-responsive-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')" class="mobile-nav-item">
+                    <span class="nav-icon">🧑‍💼</span> Usuarios
+                </x-responsive-nav-link>
+            @endrole
         </div>
 
         <!-- Responsive user menu -->
@@ -206,26 +240,19 @@
             </div>
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')" class="mobile-user-item">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
                     Perfil
                 </x-responsive-nav-link>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <x-responsive-nav-link :href="route('logout')" class="mobile-user-item"
                         onclick="event.preventDefault(); this.closest('form').submit();">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
                         Cerrar Sesión
                     </x-responsive-nav-link>
                 </form>
             </div>
         </div>
     </div>
+
 </nav>
 
 <style>
