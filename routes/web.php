@@ -45,6 +45,18 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ============================
+    // Ajustes de Inventario
+    // ============================
+    Route::middleware([CheckRole::class . ':admin'])->group(function () {
+        Route::get('ajustes-inventario', [App\Http\Controllers\AjusteInventarioController::class, 'index'])->name('ajustes-inventario.index');
+        Route::get('ajustes-inventario/create', [App\Http\Controllers\AjusteInventarioController::class, 'create'])->name('ajustes-inventario.create');
+        Route::post('ajustes-inventario', [App\Http\Controllers\AjusteInventarioController::class, 'store'])->name('ajustes-inventario.store');
+        Route::get('ajustes-inventario/{id}', [App\Http\Controllers\AjusteInventarioController::class, 'show'])->name('ajustes-inventario.show');
+        Route::get('/producto/por-codigo/{codigo}', [App\Http\Controllers\ProductoController::class, 'buscarPorCodigo'])
+            ->name('productos.buscar-por-codigo');
+    });
+
+    // ============================
     // CAJERO — Facturas, Clientes, Reparaciones
     // ============================
     Route::middleware([CheckRole::class . ':admin|cajero'])->group(function () {

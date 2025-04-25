@@ -10,7 +10,7 @@
                             class="h-10 w-auto transition-transform hover:scale-105">
                     </a>
                 </div>
-<!-- opciones que se habilitan segun permisos-->
+                <!-- opciones que se habilitan segun permisos-->
                 <!-- Navigation Links -->
                 <div class="hidden sm:flex sm:items-center sm:space-x-2 ml-6">
                     @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('cajero'))
@@ -34,7 +34,11 @@
                                     <x-nav-link :href="route('inventario.index')" class="nav-dropdown-item">
                                         <span class="nav-icon">📥</span> Ingreso Inventario
                                     </x-nav-link>
+                                    <x-nav-link :href="route('ajustes-inventario.index')" class="nav-dropdown-item">
+                                        <span class="nav-icon">🛠️</span> Ajuste Inventario
+                                    </x-nav-link>
                                 </div>
+
                             </div>
                         @endif
                     @endif
@@ -180,8 +184,12 @@
                             <x-responsive-nav-link :href="route('inventario.index')" class="mobile-nav-subitem">
                                 <span class="nav-icon">📥</span> Ingreso Inventario
                             </x-responsive-nav-link>
+                            <x-responsive-nav-link :href="route('ajustes-inventario.index')" class="mobile-nav-subitem">
+                                <span class="nav-icon">🛠️</span> Ajuste Inventario
+                            </x-responsive-nav-link>
                         @endrole
                     </div>
+
                 </div>
             @endrole
 

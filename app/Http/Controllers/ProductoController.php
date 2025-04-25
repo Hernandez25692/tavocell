@@ -63,4 +63,18 @@ class ProductoController extends Controller
 
         return redirect()->route('productos.index')->with('success', 'Producto eliminado correctamente.');
     }
+
+    public function buscarPorCodigo($codigo)
+    {
+        $producto = \App\Models\Producto::where('codigo', $codigo)->first();
+
+        if (!$producto) {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        }
+
+        return response()->json([
+            'nombre' => $producto->nombre,
+            'stock' => $producto->stock
+        ]);
+    }
 }
