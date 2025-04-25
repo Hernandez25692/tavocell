@@ -76,42 +76,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // ============================
-    // TÉCNICO — Solo Reparaciones (completo)
+    // ADMIN, CAJERO y TÉCNICO — Acceso completo a Reparaciones
     // ============================
-    Route::middleware([CheckRole::class . ':admin|tecnico'])->group(function () {
-        Route::resource('reparaciones', ReparacionController::class);
-        Route::post('/reparaciones/{reparacion}/facturar', [ReparacionController::class, 'facturar'])->name('facturar.reparacion');
-        Route::post('/reparaciones/{reparacion}/abonar', [ReparacionController::class, 'abonar'])->name('reparaciones.abonar');
-        Route::get('reparaciones/{reparacion}/seguimientos', [SeguimientoReparacionController::class, 'index'])->name('seguimientos.index');
-        Route::post('reparaciones/{reparacion}/seguimientos', [SeguimientoReparacionController::class, 'store'])->name('seguimientos.store');
-    });
-
-    // ============================
-    // Cajero —  — Solo Reparaciones (completo)
-    // ============================
-    Route::middleware([CheckRole::class . ':admin|cajero'])->group(function () {
-        Route::resource('reparaciones', ReparacionController::class);
-        Route::post('/reparaciones/{reparacion}/facturar', [ReparacionController::class, 'facturar'])->name('facturar.reparacion');
-        Route::post('/reparaciones/{reparacion}/abonar', [ReparacionController::class, 'abonar'])->name('reparaciones.abonar');
-        Route::get('reparaciones/{reparacion}/seguimientos', [SeguimientoReparacionController::class, 'index'])->name('seguimientos.index');
-        Route::post('reparaciones/{reparacion}/seguimientos', [SeguimientoReparacionController::class, 'store'])->name('seguimientos.store');
-    });
-
-    // ============================
-    // Tecnico —  Reparaciones (completo)
-    // ============================
-    Route::middleware([CheckRole::class . ':admin|tecnico'])->group(function () {
-        Route::resource('reparaciones', ReparacionController::class);
-        Route::post('/reparaciones/{reparacion}/facturar', [ReparacionController::class, 'facturar'])->name('facturar.reparacion');
-        Route::post('/reparaciones/{reparacion}/abonar', [ReparacionController::class, 'abonar'])->name('reparaciones.abonar');
-        Route::get('reparaciones/{reparacion}/seguimientos', [SeguimientoReparacionController::class, 'index'])->name('seguimientos.index');
-        Route::post('reparaciones/{reparacion}/seguimientos', [SeguimientoReparacionController::class, 'store'])->name('seguimientos.store');
-    });
-
-    // ============================
-    // Tecnico —  Reparaciones (completo)
-    // ============================
-    Route::middleware([CheckRole::class . ':cajero'])->group(function () {
+    Route::middleware([CheckRole::class . ':admin|cajero|tecnico'])->group(function () {
         Route::resource('reparaciones', ReparacionController::class);
         Route::post('/reparaciones/{reparacion}/facturar', [ReparacionController::class, 'facturar'])->name('facturar.reparacion');
         Route::post('/reparaciones/{reparacion}/abonar', [ReparacionController::class, 'abonar'])->name('reparaciones.abonar');
