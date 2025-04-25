@@ -77,7 +77,6 @@ class ReparacionController extends Controller
             'abono' => 'nullable|numeric|min:0|max:' . $request->input('costo_total'),
         ]);
 
-        // Crear la reparación
         $reparacion = Reparacion::create([
             'cliente_id' => $request->cliente_id,
             'marca' => $request->marca,
@@ -91,6 +90,7 @@ class ReparacionController extends Controller
             'abono' => $request->abono ?? 0,
             'estado' => 'recibido',
         ]);
+
         if ($request->filled('abono') && $request->abono > 0) {
             \App\Models\AbonoReparacion::create([
                 'reparacion_id' => $reparacion->id,
@@ -100,13 +100,11 @@ class ReparacionController extends Controller
             ]);
         }
 
-        // Generar código QR con la URL pública de seguimiento
         $qr = new \Milon\Barcode\DNS2D();
         $qr->setStorPath(storage_path('framework/qr'));
         $url = route('consulta.reparacion.publica', ['id' => $reparacion->id]);
         $qrData = $qr->getBarcodePNG($url, 'QRCODE');
 
-        // Crear y guardar imagen física del QR
         $qrFileName = 'qr_' . $reparacion->id . '_' . \Illuminate\Support\Str::random(8) . '.png';
         $qrDir = public_path('storage/qr');
         $qrPath = $qrDir . '/' . $qrFileName;
@@ -117,19 +115,21 @@ class ReparacionController extends Controller
 
         file_put_contents($qrPath, base64_decode($qrData));
 
-        // Generar el PDF usando ruta local absoluta válida para DomPDF
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('reparaciones.comprobante_pdf', [
             'reparacion' => $reparacion,
             'qrPath' => 'file://' . $qrPath
         ]);
 
-        $pdfName = 'comprobante_' . $reparacion->id . '.pdf';
+        $pdfName = "comprobante_reparacion_{$reparacion->id}.pdf";
         Storage::disk('public')->put("comprobantes/{$pdfName}", $pdf->output());
 
         return redirect()->route('reparaciones.index')
             ->with('success', 'Reparación registrada correctamente.')
-            ->with('comprobante', $pdfName);
+            ->with('comprobante', $pdfName)
+            ->with('comprobante_id', $reparacion->id);
     }
+
+
 
 
     public function facturar(Reparacion $reparacion)

@@ -18,7 +18,7 @@
 
             <!-- ENCABEZADO -->
             <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                <h1 class="text-3xl font-bold text-gray-800 mb-4">📱 Seguimiento de Reparación</h1>
+                <h1 class="text-3xl font-bold text-gray-800 mb-4">📱 Seguimiento de Reparación #{{ $reparacion->id }}</h1>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
                     <p><span class="font-semibold">👤 Cliente:</span> {{ $reparacion->cliente->nombre }}</p>
                     <p><span class="font-semibold">📱 Dispositivo:</span> {{ $reparacion->marca }} {{ $reparacion->modelo }}
@@ -216,8 +216,10 @@
                                         <td class="px-4 py-2 font-semibold text-green-700">L.
                                             {{ number_format($abono->monto, 2) }}</td>
                                         <td class="px-4 py-2">{{ $abono->metodo_pago ?? 'Agregado manual' }}</td>
-                                        <td class="px-4 py-2">{{ $abono->observaciones ?? 'Desde la vista Seguimiento' }}</td>
+                                        <td class="px-4 py-2">{{ $abono->observaciones ?? 'Desde la vista Seguimiento por' }}</td>
+                                        
                                     </tr>
+                                    
                                 @endforeach
                             </tbody>
                         </table>
