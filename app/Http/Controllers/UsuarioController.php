@@ -50,20 +50,28 @@ class UsuarioController extends Controller
     public function update(Request $request, User $usuario)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string|max:255',
             'email' => "required|email|unique:users,email,{$usuario->id}",
-            'role' => 'required'
+            'role' => 'required',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $usuario->update([
+        $datos = [
             'name' => $request->name,
             'email' => $request->email,
-        ]);
+        ];
+
+        if ($request->filled('password')) {
+            $datos['password'] = Hash::make($request->password);
+        }
+
+        $usuario->update($datos);
 
         $usuario->syncRoles([$request->role]);
 
         return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente');
     }
+
 
     public function destroy(User $usuario)
     {
