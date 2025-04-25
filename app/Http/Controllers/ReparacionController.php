@@ -192,6 +192,7 @@ class ReparacionController extends Controller
             'monto' => $nuevoAbono,
             'metodo_pago' => $request->metodo_pago,
             'observaciones' => $request->observaciones,
+            'usuario_id' => auth()->id(),
         ]);
 
         // Actualizar campo acumulado

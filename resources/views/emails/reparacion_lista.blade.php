@@ -169,7 +169,7 @@
         <div class="footer">
             <p>Gracias por confiar en <strong>TavoCell 504</strong> 🔧</p>
             <p>"Honradez, Calidad y Servicio"</p>
-            <p>📞 +504 3238-4184 | 📧 info@tavocell504.com</p>
+            <p>📞 +504 3238-4184 | 📧 tavocell504@gmail.com</p>
             <p>© {{ date('Y') }} TavoCell 504. Todos los derechos reservados.</p>
         </div>
     </div>

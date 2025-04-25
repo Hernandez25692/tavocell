@@ -216,10 +216,16 @@
                                         <td class="px-4 py-2 font-semibold text-green-700">L.
                                             {{ number_format($abono->monto, 2) }}</td>
                                         <td class="px-4 py-2">{{ $abono->metodo_pago ?? 'Agregado manual' }}</td>
-                                        <td class="px-4 py-2">{{ $abono->observaciones ?? 'Desde la vista Seguimiento por' }}</td>
-                                        
+                                        <td class="px-4 py-2">
+                                            {{ $abono->observaciones ?? 'Desde la vista Seguimiento' }}
+                                            @if ($abono->usuario)
+                                                <br><span class="text-xs text-gray-500 italic">Registrado por:
+                                                    {{ $abono->usuario->name }}</span>
+                                            @endif
+                                        </td>
+
+
                                     </tr>
-                                    
                                 @endforeach
                             </tbody>
                         </table>

@@ -14,16 +14,17 @@ class AbonoReparacion extends Model
         'monto',
         'metodo_pago',
         'observaciones',
+        'usuario_id',
     ];
+
 
     public function reparacion()
     {
         return $this->belongsTo(Reparacion::class);
     }
-    
-    public function usuario()
-{
-    return $this->belongsTo(User::class, 'usuario_id');
-}
 
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'usuario_id');
+    }
 }
