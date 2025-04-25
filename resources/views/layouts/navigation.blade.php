@@ -10,36 +10,36 @@
                             class="h-10 w-auto transition-transform hover:scale-105">
                     </a>
                 </div>
-
+<!-- opciones que se habilitan segun permisos-->
                 <!-- Navigation Links -->
                 <div class="hidden sm:flex sm:items-center sm:space-x-2 ml-6">
-                    @role('admin|cajero')
-                        <!-- Productos (solo admin o cajero) -->
-                        <div class="relative group" x-data="{ open: false }" @mouseenter="open = true"
-                            @mouseleave="open = false">
-                            <button class="nav-dropdown-btn">
-                                <span class="nav-icon">📦</span>
-                                <span>Productos</span>
-                                <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }"
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div class="nav-dropdown-menu" x-show="open" x-transition>
-                                <x-nav-link :href="route('productos.index')" class="nav-dropdown-item">
-                                    <span class="nav-icon">📋</span> Ver Productos
-                                </x-nav-link>
-                                @role('admin')
+                    @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('cajero'))
+                        <!-- Productos -->
+                        @if (Auth::user()->hasRole('admin'))
+                            <div class="relative group" x-data="{ open: false }" @mouseenter="open = true"
+                                @mouseleave="open = false">
+                                <button class="nav-dropdown-btn">
+                                    <span class="nav-icon">📦</span>
+                                    <span>Productos</span>
+                                    <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': open }"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <div class="nav-dropdown-menu" x-show="open" x-transition>
+                                    <x-nav-link :href="route('productos.index')" class="nav-dropdown-item">
+                                        <span class="nav-icon">📋</span> Ver Productos
+                                    </x-nav-link>
                                     <x-nav-link :href="route('inventario.index')" class="nav-dropdown-item">
                                         <span class="nav-icon">📥</span> Ingreso Inventario
                                     </x-nav-link>
-                                @endrole
+                                </div>
                             </div>
-                        </div>
-                    @endrole
+                        @endif
+                    @endif
 
-                    @role('admin|cajero')
+                    @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('cajero'))
                         <!-- Facturación -->
                         <div class="relative group" x-data="{ open: false }" @mouseenter="open = true"
                             @mouseleave="open = false">
@@ -62,39 +62,40 @@
                                 <x-nav-link :href="route('facturas_reparaciones.index')" class="nav-dropdown-item">
                                     <span class="nav-icon">🔧</span> Historial Reparaciones
                                 </x-nav-link>
-                                @role('admin')
+                                @if (Auth::user()->hasRole('admin'))
                                     <x-nav-link :href="route('cierres.index')" class="nav-dropdown-item">
                                         <span class="nav-icon">🔒</span> Cierres Diarios
                                     </x-nav-link>
-                                @endrole
+                                @endif
                             </div>
                         </div>
-                    @endrole
+                    @endif
 
-                    @role('admin|cajero')
+                    @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('cajero'))
                         <!-- Clientes -->
                         <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="nav-item">
                             <span class="nav-icon">👤</span>
                             <span>Clientes</span>
                         </x-nav-link>
-                    @endrole
+                    @endif
 
-                    @role('admin|cajero|tecnico')
+                    @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('cajero') || Auth::user()->hasRole('tecnico'))
                         <!-- Reparaciones -->
                         <x-nav-link :href="route('reparaciones.index')" :active="request()->routeIs('reparaciones.*')" class="nav-item">
                             <span class="nav-icon">🛠️</span>
                             <span>Reparaciones</span>
                         </x-nav-link>
-                    @endrole
+                    @endif
 
-                    @role('admin')
+                    @if (Auth::user()->hasRole('admin'))
                         <!-- Usuarios -->
                         <x-nav-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')" class="nav-item">
                             <span class="nav-icon">🧑‍💼</span>
                             <span>Usuarios</span>
                         </x-nav-link>
-                    @endrole
+                    @endif
                 </div>
+
 
             </div>
 

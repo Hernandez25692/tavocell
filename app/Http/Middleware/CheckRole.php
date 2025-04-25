@@ -8,10 +8,16 @@ use Illuminate\Support\Facades\Auth;
 
 class CheckRole
 {
-    public function handle(Request $request, Closure $next, $role)
+    public function handle(Request $request, Closure $next, $roles)
     {
-        if (!Auth::check() || !$request->user()->hasRole($role)) {
-            abort(403, 'Acceso denegado. No tienes el rol requerido.');
+        if (!Auth::check()) {
+            abort(403, 'Acceso denegado. Usuario no autenticado.');
+        }
+
+        $rolesArray = explode('|', $roles); // admin|cajero|tecnico
+
+        if (!$request->user()->hasAnyRole($rolesArray)) {
+            abort(403, 'Acceso denegado. No tienes los permisos necesarios.');
         }
 
         return $next($request);
