@@ -6,7 +6,7 @@
     <title>@yield('title', 'TavoCell 504')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
+    <link rel="icon" type="image/png" hre
 
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
