@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Factura;
 use App\Models\Reparacion;
+use App\Models\SuscripcionNetflix;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -26,11 +28,17 @@ class DashboardController extends Controller
             ->orderBy('fecha')
             ->get();
 
+        $suscripcionesProximas = SuscripcionNetflix::where('estado', 'activo')
+            ->whereBetween('fecha_fin', [$hoy, $hoy->copy()->addDays(5)])
+            ->with('cliente')
+            ->get();
+
         return view('dashboard', compact(
             'ingresosTotales',
             'totalFacturasHoy',
             'reparacionesActivas',
-            'ingresosPorDia'
+            'ingresosPorDia',
+            'suscripcionesProximas'
         ));
     }
 }

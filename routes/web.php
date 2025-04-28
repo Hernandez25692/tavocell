@@ -42,6 +42,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('cierres', [CierreDiarioController::class, 'store'])->name('cierres.store');
         Route::post('/cierres/{id}/descargar', [CierreDiarioController::class, 'descargar'])->name('cierres.descargar');
         Route::post('/cierres/{id}/actualizar-efectivo', [CierreDiarioController::class, 'actualizarEfectivo'])->name('cierres.actualizarEfectivo');
+
+
+        // Suscripciones Netflix
+        Route::resource('suscripciones-netflix', App\Http\Controllers\SuscripcionNetflixController::class);
+        
     });
 
     // ============================
@@ -85,6 +90,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{factura}/pdf', [FacturaReparacionController::class, 'pdf'])->name('facturas_reparaciones.pdf');
             Route::delete('/{factura}', [FacturaReparacionController::class, 'destroy'])->name('facturas_reparaciones.destroy');
         });
+
+        // Suscripciones Netflix
+        Route::resource('suscripciones-netflix', App\Http\Controllers\SuscripcionNetflixController::class);
     });
 
     // ============================

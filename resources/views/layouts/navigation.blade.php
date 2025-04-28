@@ -76,6 +76,14 @@
                     @endif
 
                     @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('cajero'))
+                        <x-nav-link :href="route('suscripciones-netflix.index')" :active="request()->routeIs('suscripciones-netflix.*')" class="nav-item">
+                            <span class="nav-icon">🎬</span>
+                            <span>Suscripciones Netflix</span>
+                        </x-nav-link>
+                    @endif
+
+
+                    @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('cajero'))
                         <!-- Clientes -->
                         <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="nav-item">
                             <span class="nav-icon">👤</span>
@@ -216,6 +224,13 @@
                     </div>
                 </div>
             @endrole
+
+            @role('admin|cajero')
+                <x-responsive-nav-link :href="route('suscripciones-netflix.index')" :active="request()->routeIs('suscripciones-netflix.*')" class="mobile-nav-item">
+                    <span class="nav-icon">🎬</span> Suscripciones Netflix
+                </x-responsive-nav-link>
+            @endrole
+
 
             @role('admin|cajero')
                 <x-responsive-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" class="mobile-nav-item">
